@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+      "module":"commonjs",
+      "target":"ES2015",
+      "sourceMap":false,
+      "outDir":"src/js"
+  },
+  "include":["src/ts/**/*"],
+  "exclude":["node_modules"] // default로 해놓으면 편하다. 
+}
