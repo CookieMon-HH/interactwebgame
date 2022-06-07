@@ -18,7 +18,7 @@ const gameProp = {
 }
 
 const renderGame = () => {
-	hero.keyMotion();
+	character.keyMotion();
     bulletComProp.arr.forEach((arr, i) => {
 		arr.moveBullet();
 	});
@@ -29,16 +29,13 @@ const renderGame = () => {
 const windowEvent = () => {
 	window.addEventListener('keydown', e => {
 		key.keyDown[key.keyValue[e.which]] = true;
-		hero.keyMotion();
 	});
 
 	window.addEventListener('keyup', e => {
 		key.keyDown[key.keyValue[e.which]] = false;
-		hero.keyMotion();
 	});
 }
 
-//CSS 로드될때 느린상황(깜빡거리는것) 때문에 미리 로드하는 것
 const loadImg = () => {
 	const preLoadImgSrc = ['../../../lib/images/ninja_attack.png', '../../../lib/images/ninja_run.png'];
 	preLoadImgSrc.forEach( arr => {
@@ -47,9 +44,9 @@ const loadImg = () => {
 	});
 }
 
-let hero;
+let character;
 const init = () => {
-	hero = new Hero('.hero');
+	character = new Character('.character');
     loadImg();
 	windowEvent();
     renderGame();
