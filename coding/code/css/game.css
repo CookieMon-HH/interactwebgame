@@ -1,0 +1,29 @@
+.game_app {position: relative; height: 100vh;}
+.game_app .game {position: absolute; left: 0; bottom: 0; z-index: 10; width: 100%; height: 100%; background-color: #000;}
+
+/* keyframes : 애니메이션 구간을 정하고 어떤 스타일을 적용시킬지 정하는 문법 (name, 구간,스타일로 구성) */
+@keyframes tank_basic {
+	from {background-position-x: 0px;}
+	to {background-position-x: -3800px;}
+}
+@keyframes tank_move {
+	from {background-position-x: 0px;}
+	to {background-position-x: -3800px;}
+}
+@keyframes tank_attack {
+	from {background-position-x: 0px;}
+	to {background-position-x: -3800px;}
+}
+
+.tank_box {position: fixed; left:0; bottom: 0; z-index:100; width: 380px; height: 380px;}
+.tank_box .tank {height: 100%; background-image: url('../../../lib/images/tank_basic.png'); background-size: 3800px 380px; animation: tank_basic 0.7s infinite steps(10);}
+/* animation 에 keyframes name을 불러와 적용 (0.7s 동안 keyframes의 범위를 10번으로 나눠 이동)  */
+
+.tank_box .tank.rotate {transform: rotate(0deg);}
+
+.tank_box .tank.move {height: 100%; background-image: url('../../../lib/images/tank_move.png'); background-size: 3800px 380px; animation: tank_move 0.7s infinite steps(10);}
+.tank_box .tank.attack {height: 100%; background-image: url('../../../lib/images/tank_attack.png'); background-size: 3800px 380px; animation: tank_attack 0.1s infinite steps(10);}
+/* class를 명시해두고 js파일에서 element.add / remove를 통해 컨트롤 하는듯 */
+
+.tank_bullet_box {position: absolute; left: 0; bottom: 0; z-index: 90; width: 60px; height: 100px; }
+.tank_bullet {width: 100%; height: 100%; background-image: url('../../../lib/images/normal_bullet.png'); background-size: cover; background-repeat: no-repeat;}
