@@ -47,7 +47,7 @@ class Character {
         };
         this._element = document.querySelector(element);
         this._moveX = 0;
-        this._speed = 10;
+        this._speed = 2;
         this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
     }
     get direction() {

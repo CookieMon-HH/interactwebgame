@@ -13,7 +13,7 @@ class Bullet{
 		this._element.className = 'character_bullet';
 		this._x = 0;
 		this._y = 0;
-		this._speed = 30;
+		this._speed = 5;
 		this._distance = 0;
 		this._direction = CharacterDirection.RIGHT;
 		this.init();
