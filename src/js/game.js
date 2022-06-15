@@ -6,16 +6,26 @@ const key = {
         88: 'attack'
     }
 };
+const gameBackground = {
+    gameBox: document.querySelector('.game')
+};
 const gameProp = {
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight
 };
 const renderGame = () => {
     hero.keyMotion(key);
+    setGameBackground();
     hero.bullets.forEach((bullet) => {
         bullet.moveBullet();
     });
     window.requestAnimationFrame(renderGame);
+};
+const setGameBackground = () => {
+    let parallaxValue = Math.min(0, (hero.movex - gameProp.screenWidth / 3) * -1);
+    if (!(gameBackground.gameBox instanceof HTMLElement))
+        return;
+    gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
 };
 const windowEvent = () => {
     window.addEventListener('keydown', e => {
@@ -23,6 +33,10 @@ const windowEvent = () => {
     });
     window.addEventListener('keyup', e => {
         key.keyDown[key.keyValue[e.which]] = false;
+    });
+    window.addEventListener('resize', e => {
+        gameProp.screenWidth = window.innerWidth;
+        gameProp.screenHeight = window.innerHeight;
     });
 };
 const loadImg = () => {

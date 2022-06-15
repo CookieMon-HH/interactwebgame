@@ -1,6 +1,6 @@
 class HeroRender {
-    constructor(el) {
-        this.el = document.querySelector(el);
+    constructor(elClassName) {
+        this.el = document.querySelector(elClassName);
     }
     left() {
         this.el.classList.add("run");
@@ -20,6 +20,8 @@ class HeroRender {
         this.el.classList.remove("attack");
     }
     render(movex) {
+        if (!(this.el.parentNode instanceof HTMLElement))
+            return;
         this.el.parentNode.style.transform = `translateX(${movex}px)`;
     }
     position() {
@@ -42,48 +44,52 @@ class Hero {
     constructor(render) {
         this.render = render;
         this.movex = 0;
-        this.speed = 16;
+        this.speed = 11;
+        this.direction = 'right';
         this.bulletComProp = {
             launch: false,
             arr: [],
         };
     }
     keyMotion(key) {
-        if (key.keyDown["left"]) {
+        const { keyDown } = key;
+        if (keyDown.left) {
             this.render.left();
             this.left();
         }
-        else if (key.keyDown["right"]) {
+        else if (keyDown.right) {
             this.render.right();
             this.right();
         }
-        if (key.keyDown["attack"]) {
+        if (keyDown.attack) {
             if (!this.bulletComProp.launch) {
                 this.render.attack();
                 this.attack();
             }
         }
-        if (!key.keyDown["left"] && !key.keyDown["right"]) {
+        if (!keyDown.left && !keyDown.right) {
             this.render.moveEnd();
         }
-        if (!key.keyDown["attack"]) {
+        if (!keyDown.attack) {
             this.render.attackEnd();
             this.attackEnd();
         }
         this.render.render(this.movex);
     }
     left() {
-        this.movex = this.movex - this.speed;
+        this.direction = 'left';
+        this.movex = this.movex <= 0 ? 0 : this.movex - this.speed;
     }
     right() {
+        this.direction = 'right';
         this.movex = this.movex + this.speed;
     }
     attack() {
-        const { left, bottom } = this.render.position();
+        const { bottom } = this.render.position();
         const { width, height } = this.render.size();
-        const x = left + width / 2;
+        const x = this.direction === 'right' ? this.movex + width / 2 : this.movex - width / 2;
         const y = bottom - height / 2;
-        this.bulletComProp.arr.push(new Bullet(x, y));
+        this.bulletComProp.arr.push(new Bullet(x, y, this.direction));
         this.bulletComProp.launch = true;
     }
     attackEnd() {
