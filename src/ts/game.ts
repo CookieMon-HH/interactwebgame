@@ -12,6 +12,10 @@ const bulletComProp = {
 	arr: []
 }
 
+const gameBackground : any ={
+	gameBox: document.querySelector('.game')
+}
+
 const gameProp = {
 	screenWidth : window.innerWidth,
 	screenHeight : window.innerHeight
@@ -19,11 +23,19 @@ const gameProp = {
 
 const renderGame = () => {
 	hero.keyMotion();
+	setGameBackground();
+
     bulletComProp.arr.forEach((arr, i) => {
 		arr.moveBullet();
 	});
 	window.requestAnimationFrame(renderGame);
 
+}
+
+const setGameBackground = () => {
+	let parallaxValue = Math.min(0, (hero.movex-gameProp.screenWidth/3) * -1);
+
+	gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
 }
 
 const windowEvent = () => {
@@ -36,11 +48,16 @@ const windowEvent = () => {
 		key.keyDown[key.keyValue[e.which]] = false;
 		hero.keyMotion();
 	});
+
+	window.addEventListener('resize', e => {
+		gameProp.screenWidth = window.innerWidth;
+		gameProp.screenHeight = window.innerHeight;
+	});
 }
 
 //CSS 로드될때 느린상황(깜빡거리는것) 때문에 미리 로드하는 것
 const loadImg = () => {
-	const preLoadImgSrc = ['../../../lib/images/ninja_attack.png', '../../../lib/images/ninja_run.png'];
+	const preLoadImgSrc = ['../lib/images/ninja_attack.png', '../lib/images/ninja_run.png'];
 	preLoadImgSrc.forEach( arr => {
 		const img = new Image();
 		img.src = arr;
