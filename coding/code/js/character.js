@@ -1,54 +1,59 @@
 class Character {
-	constructor(el){
-		this.el = document.querySelector(el);
-		this.movex = 0;
-		this.speed = 16;
-	}
-	keyMotion(){
-		if(key.keyDown['left']){
-			this.el.classList.add('run');
-			this.el.classList.add('flip');
-
-			this.movex = this.movex - this.speed;
-		}else if(key.keyDown['right']){
-			this.el.classList.add('run');
-			this.el.classList.remove('flip');
-
-			this.movex = this.movex + this.speed;
-		}
-
-		if(key.keyDown['attack']){
-			if(!bulletComProp.launch){
-				this.el.classList.add('attack');
-				bulletComProp.arr.push(new Bullet());
-
-				bulletComProp.launch = true;
-			}
-		}
-
-		if(!key.keyDown['left'] && !key.keyDown['right']){
-			this.el.classList.remove('run');
-		}
-
-		if(!key.keyDown['attack']){
-			this.el.classList.remove('attack');
-			bulletComProp.launch = false;
-		}
-
-		this.el.parentNode.style.transform = `translateX(${this.movex}px)`;
-	}
-	position(){
-		return{
-			left: this.el.getBoundingClientRect().left,
-			right: this.el.getBoundingClientRect().right,
-			top: gameProp.screenHeight - this.el.getBoundingClientRect().top,
-			bottom: gameProp.screenHeight - this.el.getBoundingClientRect().top - this.el.getBoundingClientRect().height
-		}
-	}
-	size(){
-		return{
-			width: this.el.offsetWidth,
-			height: this.el.offsetHeight
-		}
-	}
+    constructor(element) {
+        this.keyMotion = () => {
+            if (key.keyDown['left']) {
+                this._direction = "LEFT" /* CharacterDirection.LEFT */;
+                this._element.classList.add('run');
+                this._element.classList.add('flip');
+                if (this._moveX <= 0)
+                    return;
+                this._moveX = this._moveX - this._speed;
+            }
+            else if (key.keyDown['right']) {
+                this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
+                this._element.classList.add('run');
+                this._element.classList.remove('flip');
+                this._moveX = this._moveX + this._speed;
+            }
+            if (key.keyDown['attack']) {
+                if (!bulletComProp.launch) {
+                    this._element.classList.add('attack');
+                    bulletComProp.arr.push(new Bullet());
+                    bulletComProp.launch = true;
+                }
+            }
+            if (!key.keyDown['left'] && !key.keyDown['right']) {
+                this._element.classList.remove('run');
+            }
+            if (!key.keyDown['attack']) {
+                this._element.classList.remove('attack');
+                bulletComProp.launch = false;
+            }
+            this._element.parentElement.style.transform = `translateX(${this._moveX}px)`;
+        };
+        this.position = () => {
+            return {
+                left: this._element.getBoundingClientRect().left,
+                right: this._element.getBoundingClientRect().right,
+                top: gameProp.screenHeight - this._element.getBoundingClientRect().top,
+                bottom: gameProp.screenHeight - this._element.getBoundingClientRect().top - this._element.getBoundingClientRect().height
+            };
+        };
+        this.size = () => {
+            return {
+                width: this._element.offsetWidth,
+                height: this._element.offsetHeight
+            };
+        };
+        this._element = document.querySelector(element);
+        this._moveX = 0;
+        this._speed = 10;
+        this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
+    }
+    get direction() {
+        return this._direction;
+    }
+    get moveX() {
+        return this._moveX;
+    }
 }

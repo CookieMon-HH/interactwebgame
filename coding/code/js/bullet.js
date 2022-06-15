@@ -1,23 +1,46 @@
-class Bullet{
-	constructor(){
-		this.parentNode = document.querySelector('.game');
-		this.el = document.createElement('div');
-		this.el.className = 'character_bullet';
-		this.x = 0;
-		this.y = 0;
-		this.speed = 30;
-		this.distance = 0;
-		this.init();
-	}
-	init(){
-		this.x = character.position().left + character.size().width / 2;
-		this.y = character.position().bottom - character.size().height / 2;
-		this.distance = this.x;
-		this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
-		this.parentNode.appendChild(this.el);
-	}
-	moveBullet(){
-		this.distance += this.speed;
-		this.el.style.transform = `translate(${this.distance}px, ${this.y}px)`;
-	}
+class Bullet {
+    constructor() {
+        this.init = () => {
+            this._direction = character.direction;
+            this._x = this._direction === "RIGHT" /* CharacterDirection.RIGHT */ ? character.moveX + character.size().width / 2 : character.moveX - character.size().width / 2;
+            this._y = character.position().bottom - character.size().height / 2;
+            this._distance = this._x;
+            this._element.style.transform = `translate(${this._x}px, ${this._y}px)`;
+            this._parentNode.appendChild(this._element);
+        };
+        this.moveBullet = () => {
+            let setRotate = '';
+            if (this._direction === "LEFT" /* CharacterDirection.LEFT */) {
+                this._distance -= this._speed;
+                setRotate = 'rotate(180deg)';
+            }
+            else {
+                this._distance += this._speed;
+            }
+            this._element.style.transform = `translate(${this._distance}px, ${this._y}px) ${setRotate}`;
+            this.crashBullet();
+        };
+        this.position = () => {
+            return {
+                left: this._element.getBoundingClientRect().left,
+                right: this._element.getBoundingClientRect().right,
+                top: gameProp.screenHeight - this._element.getBoundingClientRect().top,
+                bottom: gameProp.screenHeight - this._element.getBoundingClientRect().top - this._element.getBoundingClientRect().height
+            };
+        };
+        this.crashBullet = () => {
+            if (this.position().left > gameProp.screenWidth || this.position().right < 0) {
+                this._element.remove();
+            }
+        };
+        this._parentNode = document.querySelector('.game');
+        this._element = document.createElement('div');
+        this._element.className = 'character_bullet';
+        this._x = 0;
+        this._y = 0;
+        this._speed = 30;
+        this._distance = 0;
+        this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
+        this.init();
+    }
 }
