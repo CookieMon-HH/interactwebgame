@@ -13,15 +13,19 @@ class Tank {
     directionstatus: string;
     deltaX: number;
     deltaY: number;
+    tankMaxRangeX: number;
+    tankMaxRangeY: number;
+    attackDamage: Number;
 
     constructor(el){
         this.el = document.querySelector(el);
         this.rotateangle = 0;
-        this.movex = 0;
-        this.movey = 0;
+        this.movex = gameProp.fieldMaxRangeX/2;
+        this.movey = gameProp.fieldMaxRangeY/2 * -1;
         this.speed = 11;
         this.directionstatus = 'up';
         //다른이름(basicfunction)으로 instance로 만들면 안되고 같은 이름으로 만들때만 되네?.. 왜그러지?
+        this.attackDamage = 1000;
     }
     // constructor 다시 공부해보자
 
@@ -62,8 +66,13 @@ class Tank {
             
             this.deltaX = this.speed * Math.cos(degtorad(this.rotateangle));
             this.deltaY = -1 * this.speed * Math.sin(degtorad(this.rotateangle));
-            this.movex = this.movex < 0 ? 0 : this.movex + this.deltaX;
-            this.movey = this.movey > 0 ? 0 : this.movey + this.deltaY;
+            this.tankMaxRangeX = gameProp.fieldMaxRangeX - this.el.offsetWidth;
+            this.tankMaxRangeY = gameProp.fieldMaxRangeY - this.el.offsetHeight;
+
+            this.movex = Math.min(this.tankMaxRangeX, Math.max(0,this.movex + this.deltaX))
+            this.movey = Math.max(-1*this.tankMaxRangeY,Math.min(0,this.movey + this.deltaY))
+            //범위에 따른 분기를 두지 않고 max,min으로 한번 더 감싸서 최대/최소 값 지정
+            
         }else {
             this.el.classList.remove('move');
         }
@@ -161,9 +170,103 @@ class Bullet {
 		}
 	}   
 	crashBullet(){
+        for(let j = 0; j < allMonsterComProp.arr.length; j++){
+            let monsterpos = allMonsterComProp.arr[j].position();
+			if(this.position().left < monsterpos.right && this.position().right > monsterpos.left && 
+                this.position().top > monsterpos.bottom && this.position().bottom < monsterpos.top){
+				for(let i =0; i < bulletComProp.arr.length; i++){
+					if(bulletComProp.arr[i] === this){
+						bulletComProp.arr.splice(i,1);
+						this.el.remove();
+						allMonsterComProp.arr[j].updateHp(j);
+					}
+				}
+			}
+		}
+
         if(this.position().left > gameProp.screenWidth || this.position().right < 0 || 
         this.position().top > gameProp.screenHeight || this.position().bottom < 0 ){
 			this.el.remove();
 		}
 	}
+}
+
+class Monster {
+    parentNode;
+    el;
+    elChildren;
+    hpNode;
+    hpValue: number;
+    defaultHpValue: number;
+    hpInner;
+    progress: number;
+    moveX: number;
+    moveY: number;
+    speed: number;
+
+    constructor(moveX,moveY,hp){
+        this.parentNode = document.querySelector('.game');
+        this.el = document.createElement('div');
+        this.el.className = 'monster_box';
+        this.elChildren = document.createElement('div');
+        this.elChildren.className = 'monster';
+        this.hpNode = document.createElement('div');
+        this.hpNode.className = 'hp';
+        this.hpValue = hp;
+        this.defaultHpValue = hp;
+        this.hpInner = document.createElement('span');
+        this.progress = 0;
+        this.moveX = moveX ;
+        this.moveY = moveY ;
+        this.speed = 5;
+
+        this.init();
+    }
+    init(){
+        this.hpNode.appendChild(this.hpInner);
+        this.el.appendChild(this.hpNode);
+        this.el.appendChild(this.elChildren);
+        this.parentNode.appendChild(this.el);
+    }
+    position(){
+        return {
+            left: this.el.getBoundingClientRect().left,
+            right: this.el.getBoundingClientRect().right,
+            top: gameProp.screenHeight - this.el.getBoundingClientRect().top,
+            bottom: gameProp.screenHeight - this.el.getBoundingClientRect().top - this.el.getBoundingClientRect().height
+        }
+    }
+    updateHp(index){
+        this.hpValue = Math.max(0, this.hpValue - tank.attackDamage);
+        this.progress = this.hpValue / this.defaultHpValue * 100;
+        this.el.children[0].children[0].style.width = this.progress + '%';
+
+        if(this.hpValue ===0){
+            this.dead(index);
+        }
+    }
+    dead(index){
+        this.el.classList.add('remove');
+        setTimeout(()=> this.el.remove(),200);
+        allMonsterComProp.arr.splice(index,1);
+
+    }
+    moveMonster(){
+        if(this.moveX > tank.movex){
+            this.moveX -= this.speed;
+            this.elChildren.classList.remove('flip');
+        }else{
+            this.moveX += this.speed;
+            this.elChildren.classList.add('flip');
+        }
+        if(this.moveY > tank.movey){
+            this.moveY -= this.speed;
+        }else{
+            this.moveY += this.speed;
+        }
+
+        this.el.style.transform = `translate3d(${this.moveX}px,${this.moveY}px,0)`
+
+    }
+
 }

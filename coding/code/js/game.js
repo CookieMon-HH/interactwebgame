@@ -18,13 +18,19 @@ const rotateanglelist = {
     'right': 90,
     'right_up': 45
 };
+const allMonsterComProp = {
+    arr: []
+};
 const bulletComProp = {
     launch: false,
     arr: []
 };
 const gameProp = {
     screenWidth: window.innerWidth,
-    screenHeight: window.innerHeight
+    screenHeight: window.innerHeight,
+    fieldMaxRangeX: 3000,
+    fieldMaxRangeY: 3000
+    //여기서 document.queryselector로 불러와서 세팅해주고 싶은데 HTMLElement로 정의해주고 style로 불러와야되서 어떻게 해야할 지 모르겠다... 
 };
 const gameBackground = {
     gameBox: document.querySelector('.game')
@@ -35,13 +41,17 @@ const renderGame = () => {
     bulletComProp.arr.forEach((arr, i) => {
         arr.moveBullet();
     });
+    allMonsterComProp.arr.forEach((arr, i) => {
+        arr.moveMonster();
+    });
     window.requestAnimationFrame(renderGame);
     // requestAnimationFrame 은 리페인트 이전에 실행할 콜백함수를 받아 다음 리페인트가 진행되기 전에 애니메이션을 업데이트하는 함수를 호출하게 하도록 함, 보통 1호 60회 지원
     // 이는 재귀함수를 통해 계속 반복할 수 있도록 하여 사용할 수 있다.
 };
 const setGameBackground = () => {
-    let parallaxX = Math.min(0, (tank.movex - gameProp.screenWidth / 3) * -1);
-    let parallaxY = Math.max(0, (tank.movey + gameProp.screenWidth / 4) * -1);
+    let parallaxX = Math.max((gameProp.fieldMaxRangeX - gameProp.screenWidth) * -1, Math.min(0, (tank.movex - gameProp.screenWidth / 3) * -1));
+    let parallaxY = Math.min((gameProp.fieldMaxRangeY - gameProp.screenHeight), Math.max(0, (tank.movey + gameProp.screenHeight / 3) * -1));
+    //최대범위를 주기 위해 Max / Min으로 한번 더 감싸줌
     gameBackground.gameBox.style.transform = `translate3d(${parallaxX}px,${parallaxY}px,0)`;
 };
 const widowEvent = () => {
@@ -71,6 +81,10 @@ let tank;
 const init = () => {
     tank = new Tank('.tank');
     // [참고] 생성자 함수 호출시에는 instance가 곧 this가 된다. 
+    allMonsterComProp.arr[0] = new Monster(2000, -2000, 10000);
+    allMonsterComProp.arr[1] = new Monster(1000, -1000, 8000);
+    allMonsterComProp.arr[2] = new Monster(2000, -1000, 6000);
+    allMonsterComProp.arr[3] = new Monster(1000, -2000, 5000);
     loadImg();
     widowEvent();
     renderGame();
