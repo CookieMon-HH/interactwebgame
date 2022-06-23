@@ -49,8 +49,10 @@ const loadImg = () => {
     });
 };
 let character;
+let monster;
 const init = () => {
     character = new Character('.character');
+    monster = new Monster();
     loadImg();
     windowEvent();
     renderGame();

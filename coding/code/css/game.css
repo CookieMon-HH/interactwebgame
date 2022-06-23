@@ -1,23 +1,132 @@
-.game_app {overflow: hidden; position: relative; height: 100vh; min-width: 1280px}
-.game_app .game {position: absolute; left: 0; bottom: 0; z-index: 10; width: 70000px; height: 100%; background-image: url('../../../lib/images/bg_bottom.png'); background-repeat: repeat-x; background-size: auto 100%;  will-change: transform;}
-.game_app .sky {position: absolute; left: 0; bottom: 0; z-index: 1; width: 100%; height: 100%; background-image: url('../../../lib/images/bg_top.png'); background-repeat: repeat-x; background-size: auto 100%;}
+.game_app {
+    overflow: hidden;
+    position: relative;
+    height: 100vh;
+    min-width: 1280px
+}
+
+.game_app .game {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    width: 70000px;
+    height: 100%;
+    background-image: url('../../../lib/images/bg_bottom.png');
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    will-change: transform;
+}
+
+.game_app .sky {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../lib/images/bg_top.png');
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+}
+
 @keyframes character_idle {
-	from {background-position-x: 0px;}
-	to {background-position-x: -1498px;}
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: -1498px;
+    }
 }
+
 @keyframes character_run {
-	from {background-position-x: 0px;}
-	to {background-position-x: -1498px;}
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: -1498px;
+    }
 }
+
 @keyframes character_attack {
-	from {background-position-x: 0px;}
-	to {background-position-x: -1498px;}
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: -1498px;
+    }
 }
 
-.character_box {position: fixed; left:0; bottom:0; z-index: 100; width: 150px; height: 182px; will-change: transform;}
-.character_box .character {height: 100%; background-image: url('../../../lib/images/ninja_idle.png'); background-size: 1498px 182px; animation: character_idle 0.7s infinite steps(10);}
-.character_box .character.flip {transform: rotateY(180deg);}
-.character_box .character.run,.character_box .character.run.attack {height: 100%; background-image: url('../../../lib/images/ninja_run.png'); background-size: 1498px 182px; animation: character_run 0.7s infinite steps(10);}
-.character_box .character.attack {height: 100%; background-image: url('../../../lib/images/ninja_attack.png'); background-size: 1498px 182px; animation: character_attack 0.4s 1 steps(10);}
+.character_box {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    width: 150px;
+    height: 182px;
+    will-change: transform;
+}
 
-.character_bullet {position: absolute; left:0; bottom:0; z-index:90; width:120px; height:24px; background-image: url('../../../lib/images/hero_bullet.png'); background-size:cover; background-repeat: no-repeat;  will-change: transform;}
+.character_box .character {
+    height: 100%;
+    background-image: url('../../../lib/images/ninja_idle.png');
+    background-size: 1498px 182px;
+    animation: character_idle 0.7s infinite steps(10);
+}
+
+.character_box .character.flip {
+    transform: rotateY(180deg);
+}
+
+.character_box .character.run, .character_box .character.run.attack {
+    height: 100%;
+    background-image: url('../../../lib/images/ninja_run.png');
+    background-size: 1498px 182px;
+    animation: character_run 0.7s infinite steps(10);
+}
+
+.character_box .character.attack {
+    height: 100%;
+    background-image: url('../../../lib/images/ninja_attack.png');
+    background-size: 1498px 182px;
+    animation: character_attack 0.4s 1 steps(10);
+}
+
+.character_bullet {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 90;
+    width: 120px;
+    height: 24px;
+    background-image: url('../../../lib/images/hero_bullet.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    will-change: transform;
+}
+
+@keyframes monster_run {
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: -2242px;
+    }
+}
+
+.monster_box {
+    position: absolute;
+	left: 700px;
+	bottom: 0px;
+	z-index: 90;
+    width: 280px;
+    height: 294px;
+    will-change: transform;
+}
+
+.monster_box .monster {
+    height: 100%;
+    background-image: url('../../../lib/images/monster/monster_green_run.png');
+    background-size: 2242px 294px;
+    animation: monster_run 1s infinite steps(8);
+}

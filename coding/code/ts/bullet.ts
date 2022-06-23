@@ -48,8 +48,12 @@ class Bullet{
 			bottom: gameProp.screenHeight - this._element.getBoundingClientRect().top - this._element.getBoundingClientRect().height
 		}
 	}
-	
+
 	crashBullet = () => {
+		if(this.position().right > monster.position().left){
+			this._element.remove();
+		}
+
 		if(this.position().left > gameProp.screenWidth || this.position().right < 0){
 			this._element.remove();
 		}

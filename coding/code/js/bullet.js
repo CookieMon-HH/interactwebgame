@@ -29,6 +29,9 @@ class Bullet {
             };
         };
         this.crashBullet = () => {
+            if (this.position().right > monster.position().left) {
+                this._element.remove();
+            }
             if (this.position().left > gameProp.screenWidth || this.position().right < 0) {
                 this._element.remove();
             }
