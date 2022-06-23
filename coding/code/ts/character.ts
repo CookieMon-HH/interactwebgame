@@ -1,14 +1,23 @@
+interface ICharacterDamage {
+  attack: number;
+  // 추후 스킬 추가
+}
+
 class Character {
   private _element: HTMLElement;
   private _moveX: number;
   private _speed: number;
   private _direction: CharacterDirection;
+  private _damage : ICharacterDamage;
   
   constructor(element: string) {
     this._element = document.querySelector(element);
     this._moveX = 0;
-    this._speed = 2;
+    this._speed = 12;
     this._direction = CharacterDirection.RIGHT;
+    this._damage = {
+      attack: 1000
+    }
   }
   
   get direction(){
@@ -17,6 +26,10 @@ class Character {
   
   get moveX(){
     return this._moveX;
+  }
+
+  get damage() {
+    return this._damage;
   }
   
   keyMotion = () => {

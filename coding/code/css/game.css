@@ -116,12 +116,17 @@
 
 .monster_box {
     position: absolute;
-	left: 700px;
-	bottom: 0px;
-	z-index: 90;
+    left: 700px;
+    bottom: 0px;
+    z-index: 90;
     width: 280px;
     height: 294px;
     will-change: transform;
+}
+
+.monster_box.remove {
+    opacity: 0;
+    transition: opacity .2s;
 }
 
 .monster_box .monster {
@@ -129,4 +134,23 @@
     background-image: url('../../../lib/images/monster/monster_green_run.png');
     background-size: 2242px 294px;
     animation: monster_run 1s infinite steps(8);
+}
+
+.monster_box .hp {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: #fff;
+    height: 10px;
+    border: 2px solid #000000;
+    transform: translateY(-100%);
+}
+
+.monster_box .hp span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: red;
+    transition: width .3s linear;
 }

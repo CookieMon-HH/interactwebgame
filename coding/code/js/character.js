@@ -47,13 +47,19 @@ class Character {
         };
         this._element = document.querySelector(element);
         this._moveX = 0;
-        this._speed = 2;
+        this._speed = 12;
         this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
+        this._damage = {
+            attack: 1000
+        };
     }
     get direction() {
         return this._direction;
     }
     get moveX() {
         return this._moveX;
+    }
+    get damage() {
+        return this._damage;
     }
 }

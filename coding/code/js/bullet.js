@@ -29,11 +29,24 @@ class Bullet {
             };
         };
         this.crashBullet = () => {
-            if (this.position().right > monster.position().left) {
-                this._element.remove();
-            }
+            allMonsterComProp.arr.forEach((monster, index) => {
+                if (this.position().right > monster.position().left && this.position().right < monster.position().right) {
+                    bulletComProp.arr.forEach((value, index) => {
+                        if (value === this) {
+                            bulletComProp.arr.splice(index, 1);
+                            this._element.remove();
+                            monster.updateHp(index);
+                        }
+                    });
+                }
+            });
             if (this.position().left > gameProp.screenWidth || this.position().right < 0) {
-                this._element.remove();
+                bulletComProp.arr.forEach((value, index) => {
+                    if (value === this) {
+                        bulletComProp.arr.splice(index, 1);
+                        this._element.remove();
+                    }
+                });
             }
         };
         this._parentNode = document.querySelector('.game');
@@ -41,7 +54,7 @@ class Bullet {
         this._element.className = 'character_bullet';
         this._x = 0;
         this._y = 0;
-        this._speed = 5;
+        this._speed = 20;
         this._distance = 0;
         this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
         this.init();

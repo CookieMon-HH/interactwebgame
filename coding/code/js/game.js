@@ -10,6 +10,9 @@ const bulletComProp = {
     launch: false,
     arr: []
 };
+const allMonsterComProp = {
+    arr: []
+};
 const gameBackground = {
     gameBox: document.querySelector('.game')
 };
@@ -20,8 +23,11 @@ const gameProp = {
 const renderGame = () => {
     character.keyMotion();
     setGameBackground();
-    bulletComProp.arr.forEach((arr, i) => {
-        arr.moveBullet();
+    bulletComProp.arr.forEach((bullet, i) => {
+        bullet.moveBullet();
+    });
+    allMonsterComProp.arr.forEach((monster, i) => {
+        monster.move();
     });
     window.requestAnimationFrame(renderGame);
 };
@@ -52,7 +58,8 @@ let character;
 let monster;
 const init = () => {
     character = new Character('.character');
-    monster = new Monster();
+    allMonsterComProp.arr[0] = new Monster(500, 5000);
+    allMonsterComProp.arr[1] = new Monster(1500, 2000);
     loadImg();
     windowEvent();
     renderGame();
