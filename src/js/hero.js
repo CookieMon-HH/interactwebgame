@@ -43,9 +43,10 @@ class HeroRender {
 class Hero {
     constructor(render) {
         this.render = render;
-        this.movex = 0;
+        this.moveX = 0;
         this.speed = 11;
         this.direction = 'right';
+        this.attackDamage = 1000;
         this.bulletComProp = {
             launch: false,
             arr: [],
@@ -74,26 +75,29 @@ class Hero {
             this.render.attackEnd();
             this.attackEnd();
         }
-        this.render.render(this.movex);
+        this.render.render(this.moveX);
     }
     left() {
         this.direction = 'left';
-        this.movex = this.movex <= 0 ? 0 : this.movex - this.speed;
+        this.moveX = this.moveX <= 0 ? 0 : this.moveX - this.speed;
     }
     right() {
         this.direction = 'right';
-        this.movex = this.movex + this.speed;
+        this.moveX = this.moveX + this.speed;
     }
     attack() {
         const { bottom } = this.render.position();
         const { width, height } = this.render.size();
-        const x = this.direction === 'right' ? this.movex + width / 2 : this.movex - width / 2;
+        const x = this.direction === 'right' ? this.moveX + width / 2 : this.moveX - width / 2;
         const y = bottom - height / 2;
-        this.bulletComProp.arr.push(new Bullet(x, y, this.direction));
+        this.bulletComProp.arr.push(new Bullet(x, y, this.direction, this.attackDamage));
         this.bulletComProp.launch = true;
     }
     attackEnd() {
         this.bulletComProp.launch = false;
+    }
+    position() {
+        return this.render.position();
     }
     get bullets() {
         return this.bulletComProp.arr;

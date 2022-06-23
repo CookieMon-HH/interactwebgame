@@ -6,6 +6,9 @@ const key = {
         88: 'attack'
     }
 };
+const allMonsterComProp = {
+    arr: []
+};
 const gameBackground = {
     gameBox: document.querySelector('.game')
 };
@@ -17,12 +20,18 @@ const renderGame = () => {
     hero.keyMotion(key);
     setGameBackground();
     hero.bullets.forEach((bullet) => {
-        bullet.moveBullet();
+        bullet.moveBullet(() => {
+            const crashedBullet = hero.bullets.findIndex((target) => target === bullet);
+            hero.bullets.splice(crashedBullet, 1);
+        }, allMonsterComProp.arr);
+    });
+    allMonsterComProp.arr.forEach((monster) => {
+        monster.moveMonster(hero.moveX - hero.position().left);
     });
     window.requestAnimationFrame(renderGame);
 };
 const setGameBackground = () => {
-    let parallaxValue = Math.min(0, (hero.movex - gameProp.screenWidth / 3) * -1);
+    let parallaxValue = Math.min(0, (hero.moveX - gameProp.screenWidth / 3) * -1);
     if (!(gameBackground.gameBox instanceof HTMLElement))
         return;
     gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
@@ -49,6 +58,8 @@ const loadImg = () => {
 let hero;
 const init = () => {
     hero = new Hero(new HeroRender('.hero'));
+    allMonsterComProp.arr[0] = new Monster(700, 9000);
+    allMonsterComProp.arr[1] = new Monster(300, 9000);
     loadImg();
     windowEvent();
     renderGame();

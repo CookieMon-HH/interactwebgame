@@ -22,3 +22,14 @@
 .hero_box .hero.attack {height: 100%; background-image: url('/assets/images/ninja_attack.png'); background-size: 1498px 182px; animation: hero_attack 0.7s 1 steps(10);}
 
 .hero_bullet {position: absolute; left:0; bottom:0; z-index:90; width:120px; height:24px; background-image: url('/assets/images/hero_bullet.png'); background-size:cover; background-repeat: no-repeat; will-change: transform;}
+
+@keyframes monster_run {
+	from {background-position-x: 0px;}
+	to {background-position-x: -2242px;}
+}
+
+.monster_box {position: absolute; left: 700px; bottom: 0px; z-index: 90; width: 280px; height: 294px; will-change: transform;}
+.monster_box.remove {opacity: 0; transition: opacity .2s;}
+.monster_box .monster {height: 100%; background-image: url('/assets//images/monster/monster_green_run.png'); background-size: 2242px 294px; animation: monster_run 1s infinite steps(8);}
+.monster_box .hp {position: absolute; left: 0; top: 0; width: 100%; height: 10px; border: 2px solid #000; transform: translateY(-100%);}
+.monster_box .hp span {display: block; width: 100%; height: 100%; background: red; transform-origin: 0 0; transform: scaleX(100%); transition: transform .3s;}

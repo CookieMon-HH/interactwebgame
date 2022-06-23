@@ -15,14 +15,12 @@ class BulletRender {
   }
 
   position() {
+    const { left, right, top, height } = this.el.getBoundingClientRect();
     return {
-      left: this.el.getBoundingClientRect().left,
-      right: this.el.getBoundingClientRect().right,
-      top: gameProp.screenHeight - this.el.getBoundingClientRect().top,
-      bottom:
-        gameProp.screenHeight -
-        this.el.getBoundingClientRect().top -
-        this.el.getBoundingClientRect().height,
+      left: left,
+      right: right,
+      top: gameProp.screenHeight - top,
+      bottom: gameProp.screenHeight - top - height,
     };
   }
   remove() {
@@ -37,28 +35,44 @@ class Bullet {
   speed: number;
   distance: number;
   direction: DirectionType;
+  attackDamage: number;
 
-  constructor(x: number, y: number, direction: DirectionType) {
+  constructor(x: number, y: number, direction: DirectionType, attackDamage: number) {
     this.render = new BulletRender();
     this.y = y;
     this.speed = 30;
     this.distance = x;
     this.direction = direction;
+    this.attackDamage = attackDamage;
     this.render.render(x, y, this.direction);
   }
-  moveBullet() {
+  moveBullet(crashCallback: Function, monsters: Monster[]) {
     if (this.direction === "left") {
       this.distance -= this.speed;
     } else {
       this.distance += this.speed;
     }
     this.render.render(this.distance, this.y, this.direction);
-		this.crashBullet();
+    this.crashBullet(crashCallback, monsters);
   }
-  crashBullet() {
+  crashBullet(crashCallback: Function, monsters: Monster[]) {
     const { left, right } = this.render.position();
+    const crashedMonsterIndex = monsters.findIndex((monster) => {
+      const { left: monsterLeft, right: monsterRight } = monster.position();
+      return left > monsterLeft && right < monsterRight;
+    });
+    const crashedMonster = monsters[crashedMonsterIndex];
+    if (crashedMonster) {
+      this.render.remove();
+      crashCallback();
+      crashedMonster.updateHp(this.attackDamage, () => {
+        monsters.splice(crashedMonsterIndex, 1);
+      });
+    }
+
     if (left > gameProp.screenWidth || right < 0) {
       this.render.remove();
+      crashCallback();
     }
   }
 }
