@@ -1,5 +1,11 @@
 const key = {
-    keyDown: {},
+    keyDown: {
+        left: false,
+        right: false,
+        up: false,
+        down: false,
+        attack: false
+    },
     keyValue: {
         37: 'left',
         38: 'up',
@@ -29,8 +35,9 @@ const gameProp = {
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
     fieldMaxRangeX: 3000,
-    fieldMaxRangeY: 3000
+    fieldMaxRangeY: 3000,
     //여기서 document.queryselector로 불러와서 세팅해주고 싶은데 HTMLElement로 정의해주고 style로 불러와야되서 어떻게 해야할 지 모르겠다... 
+    gameOver: false
 };
 const gameBackground = {
     gameBox: document.querySelector('.game')
@@ -47,6 +54,15 @@ const renderGame = () => {
     window.requestAnimationFrame(renderGame);
     // requestAnimationFrame 은 리페인트 이전에 실행할 콜백함수를 받아 다음 리페인트가 진행되기 전에 애니메이션을 업데이트하는 함수를 호출하게 하도록 함, 보통 1호 60회 지원
     // 이는 재귀함수를 통해 계속 반복할 수 있도록 하여 사용할 수 있다.
+};
+const endGame = () => {
+    gameProp.gameOver = true;
+    key.keyDown.left = false;
+    key.keyDown.right = false;
+    key.keyDown.up = false;
+    key.keyDown.down = false;
+    key.keyDown.attack = false;
+    setTimeout(() => document.querySelector('.game_over').classList.add('active'), 800);
 };
 const setGameBackground = () => {
     let parallaxX = Math.max((gameProp.fieldMaxRangeX - gameProp.screenWidth) * -1, Math.min(0, (tank.movex - gameProp.screenWidth / 3) * -1));

@@ -15,7 +15,11 @@ class Tank {
     deltaY: number;
     tankMaxRangeX: number;
     tankMaxRangeY: number;
-    attackDamage: Number;
+    attackDamage:number;
+    hpProgress: number;
+    hpValue: number; 
+    defaultHpValue: number; 
+    realDamage: number; 
 
     constructor(el){
         this.el = document.querySelector(el);
@@ -26,6 +30,10 @@ class Tank {
         this.directionstatus = 'up';
         //다른이름(basicfunction)으로 instance로 만들면 안되고 같은 이름으로 만들때만 되네?.. 왜그러지?
         this.attackDamage = 1000;
+        this.hpProgress = 0;
+		this.hpValue = 10000;
+		this.defaultHpValue = this.hpValue;
+		this.realDamage = 0;
     }
     // constructor 다시 공부해보자
 
@@ -92,8 +100,10 @@ class Tank {
             bulletComProp.launch = false;
         }   
 
-        this.el.style.transform = `rotate(${this.rotateangle}deg)`;
-        this.el.parentNode.style.transform = `translate3d(${this.movex}px, ${this.movey}px , 0)`;
+        if(!gameProp.gameOver){
+            this.el.style.transform = `rotate(${this.rotateangle}deg)`;
+            this.el.parentNode.style.transform = `translate3d(${this.movex}px, ${this.movey}px , 0)`;
+        }
     }
     position(){
         return {
@@ -109,6 +119,27 @@ class Tank {
             height: this.el.offsetHeight
         }
     }
+    updateHp(monsterDamage){
+        const tankHpBox = document.querySelector('.state_box .hp span') as HTMLElement 
+		this.hpValue = Math.max(0, this.hpValue - monsterDamage);
+		this.hpProgress = this.hpValue / this.defaultHpValue * 100
+		tankHpBox.style.width = this.hpProgress + '%';
+		this.crash();
+		if(this.hpValue === 0){
+			this.dead();
+		}
+	}
+    crash(){
+		this.el.classList.add('crash');
+		setTimeout(() => this.el.classList.remove('crash'), 400);
+	}
+    dead(){
+		tank.el.classList.add('dead');
+		endGame();
+	}
+    hitDamage(){
+		this.realDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
+	}
 }
 
 class Bullet {
@@ -120,6 +151,8 @@ class Bullet {
     distancex: number;
     distancey: number;
     rotateangle: number;
+    textDamageNode;
+    textDamage;
     
     constructor(){
 		this.parentNode = document.querySelector('.game');
@@ -176,8 +209,10 @@ class Bullet {
                 this.position().top > monsterpos.bottom && this.position().bottom < monsterpos.top){
 				for(let i =0; i < bulletComProp.arr.length; i++){
 					if(bulletComProp.arr[i] === this){
+                        tank.hitDamage();
 						bulletComProp.arr.splice(i,1);
 						this.el.remove();
+                        this.damageView(allMonsterComProp.arr[j]);
 						allMonsterComProp.arr[j].updateHp(j);
 					}
 				}
@@ -188,6 +223,20 @@ class Bullet {
         this.position().top > gameProp.screenHeight || this.position().bottom < 0 ){
 			this.el.remove();
 		}
+	}
+    damageView(monster){
+		this.parentNode = document.querySelector('.game_app');
+		this.textDamageNode = document.createElement('div');
+		this.textDamageNode.className = 'text_damage';
+		this.textDamage = document.createTextNode(tank.realDamage);
+		this.textDamageNode.appendChild(this.textDamage);
+		this.parentNode.appendChild(this.textDamageNode);
+		let textPosition = Math.random() * -100;
+		let damagex = monster.position().left + textPosition;
+		let damagey = monster.position().top;
+
+		this.textDamageNode.style.transform = `translate(${damagex}px,${-damagey}px)`
+		setTimeout(() => this.textDamageNode.remove(), 500);
 	}
 }
 
@@ -203,7 +252,8 @@ class Monster {
     moveX: number;
     moveY: number;
     speed: number;
-
+    crashDamage: number;
+    
     constructor(moveX,moveY,hp){
         this.parentNode = document.querySelector('.game');
         this.el = document.createElement('div');
@@ -219,6 +269,7 @@ class Monster {
         this.moveX = moveX ;
         this.moveY = moveY ;
         this.speed = 5;
+        this.crashDamage = 100;
 
         this.init();
     }
@@ -237,7 +288,7 @@ class Monster {
         }
     }
     updateHp(index){
-        this.hpValue = Math.max(0, this.hpValue - tank.attackDamage);
+        this.hpValue = Math.max(0, this.hpValue - tank.realDamage);
         this.progress = this.hpValue / this.defaultHpValue * 100;
         this.el.children[0].children[0].style.width = this.progress + '%';
 
@@ -266,7 +317,18 @@ class Monster {
         }
 
         this.el.style.transform = `translate3d(${this.moveX}px,${this.moveY}px,0)`
-
+        this.crash();
     }
+    crash(){
+		let rightDiff = 30;
+		let leftDiff = 30;
+        let topDiff = 30;
+		let bottomDiff = 30;
+
+        if(this.position().left < tank.position().right - rightDiff && this.position().right > tank.position().left + leftDiff && 
+                this.position().top > tank.position().bottom + bottomDiff  && this.position().bottom < tank.position().top - topDiff){
+                    tank.updateHp(this.crashDamage);
+            }
+	}
 
 }
