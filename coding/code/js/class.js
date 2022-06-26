@@ -150,7 +150,7 @@ class Bullet {
         this.distancex += this.speed * Math.cos(degtorad(this.rotateangle));
         this.distancey -= this.speed * Math.sin(degtorad(this.rotateangle));
         this.el.style.transform = `translate3d(${this.distancex}px, ${this.distancey}px, 0) rotate(${this.rotateangle}deg)`;
-        this.crashBullet();
+        this.removeOutboundBullet();
     }
     position() {
         return {
@@ -160,39 +160,14 @@ class Bullet {
             bottom: gameProp.screenHeight - this.el.getBoundingClientRect().top - this.el.getBoundingClientRect().height
         };
     }
-    crashBullet() {
-        for (let j = 0; j < allMonsterComProp.arr.length; j++) {
-            let monsterpos = allMonsterComProp.arr[j].position();
-            if (this.position().left < monsterpos.right && this.position().right > monsterpos.left &&
-                this.position().top > monsterpos.bottom && this.position().bottom < monsterpos.top) {
-                for (let i = 0; i < bulletComProp.arr.length; i++) {
-                    if (bulletComProp.arr[i] === this) {
-                        tank.hitDamage();
-                        bulletComProp.arr.splice(i, 1);
-                        this.el.remove();
-                        this.damageView(allMonsterComProp.arr[j]);
-                        allMonsterComProp.arr[j].updateHp(j);
-                    }
-                }
-            }
-        }
+    removeOutboundBullet() {
         if (this.position().left > gameProp.screenWidth || this.position().right < 0 ||
             this.position().top > gameProp.screenHeight || this.position().bottom < 0) {
             this.el.remove();
         }
     }
-    damageView(monster) {
-        this.parentNode = document.querySelector('.game_app');
-        this.textDamageNode = document.createElement('div');
-        this.textDamageNode.className = 'text_damage';
-        this.textDamage = document.createTextNode(tank.realDamage);
-        this.textDamageNode.appendChild(this.textDamage);
-        this.parentNode.appendChild(this.textDamageNode);
-        let textPosition = Math.random() * -100;
-        let damagex = monster.position().left + textPosition;
-        let damagey = monster.position().top;
-        this.textDamageNode.style.transform = `translate(${damagex}px,${-damagey}px)`;
-        setTimeout(() => this.textDamageNode.remove(), 500);
+    removeBullet() {
+        this.el.remove();
     }
 }
 class Monster {
@@ -257,16 +232,63 @@ class Monster {
             this.moveY += this.speed;
         }
         this.el.style.transform = `translate3d(${this.moveX}px,${this.moveY}px,0)`;
-        this.crash();
     }
-    crash() {
-        let rightDiff = 30;
-        let leftDiff = 30;
-        let topDiff = 30;
-        let bottomDiff = 30;
-        if (this.position().left < tank.position().right - rightDiff && this.position().right > tank.position().left + leftDiff &&
-            this.position().top > tank.position().bottom + bottomDiff && this.position().bottom < tank.position().top - topDiff) {
-            tank.updateHp(this.crashDamage);
+    damageView() {
+        this.parentNode = document.querySelector('.game_app');
+        this.textDamageNode = document.createElement('div');
+        this.textDamageNode.className = 'text_damage';
+        this.textDamage = document.createTextNode(tank.realDamage);
+        this.textDamageNode.appendChild(this.textDamage);
+        this.parentNode.appendChild(this.textDamageNode);
+        let textPosition = Math.random() * -100;
+        let damagex = this.position().left + textPosition;
+        let damagey = this.position().top;
+        this.textDamageNode.style.transform = `translate(${damagex}px,${-damagey}px)`;
+        setTimeout(() => this.textDamageNode.remove(), 500);
+    }
+}
+class gameEvent {
+    constructor() {
+    }
+    init() {
+    }
+    rectOvlerapChecker(mainElem, targetElem, right_tol, left_tol, top_tol, bottom_tol) {
+        if (mainElem.position().left < targetElem.position().right - right_tol
+            && mainElem.position().right > targetElem.position().left + left_tol
+            && mainElem.position().top > targetElem.position().bottom + bottom_tol
+            && mainElem.position().bottom < targetElem.position().top - top_tol) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    eventGenerater() {
+        this.bulletcrash();
+        this.monstercrash();
+    }
+    //bullet -> monster crash
+    bulletcrash() {
+        for (let j = 0; j < allMonsterComProp.arr.length; j++) {
+            for (let i = 0; i < bulletComProp.arr.length; i++) {
+                if (this.rectOvlerapChecker(bulletComProp.arr[i], allMonsterComProp.arr[j], 0, 0, 0, 0)) {
+                    tank.hitDamage();
+                    bulletComProp.arr[i].removeBullet();
+                    bulletComProp.arr.splice(i, 1);
+                    allMonsterComProp.arr[j].damageView();
+                    allMonsterComProp.arr[j].updateHp(j);
+                    break;
+                    //bulletcomProp에서 splice하므로 for 문을 다시 돌리기 위해 break
+                }
+            }
+        }
+    }
+    //monster -> tank crash 
+    monstercrash() {
+        for (let j = 0; j < allMonsterComProp.arr.length; j++) {
+            if (this.rectOvlerapChecker(allMonsterComProp.arr[j], tank, 30, 30, 30, 30)) {
+                tank.updateHp(allMonsterComProp.arr[j].crashDamage);
+            }
         }
     }
 }

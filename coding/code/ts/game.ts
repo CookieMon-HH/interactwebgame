@@ -58,6 +58,8 @@ const renderGame = () => {
     allMonsterComProp.arr.forEach((arr, i) => {
 		arr.moveMonster();
 	});
+    gameevent.eventGenerater();
+    //함수들 선언한 class 이렇게 쓰는게 맞나?..
     window.requestAnimationFrame(renderGame);
     // requestAnimationFrame 은 리페인트 이전에 실행할 콜백함수를 받아 다음 리페인트가 진행되기 전에 애니메이션을 업데이트하는 함수를 호출하게 하도록 함, 보통 1호 60회 지원
     // 이는 재귀함수를 통해 계속 반복할 수 있도록 하여 사용할 수 있다.
@@ -107,8 +109,11 @@ const loadImg = ()=> {
 }
 
 let tank;
+let gameevent;
+
 const init = () => {
     tank = new Tank('.tank');
+    gameevent = new gameEvent;
     // [참고] 생성자 함수 호출시에는 instance가 곧 this가 된다. 
     allMonsterComProp.arr[0] = new Monster(2000,-2000,10000);
     allMonsterComProp.arr[1] = new Monster(1000,-1000,8000);
