@@ -33,8 +33,10 @@ class Bullet {
                 if (this.position().right > monster.position().left && this.position().right < monster.position().right) {
                     bulletComProp.arr.forEach((value, index) => {
                         if (value === this) {
+                            character.hitDamage();
                             bulletComProp.arr.splice(index, 1);
                             this._element.remove();
+                            this.damageView(monster);
                             monster.updateHp(index);
                         }
                     });
@@ -48,6 +50,21 @@ class Bullet {
                     }
                 });
             }
+        };
+        this.damageView = (monster) => {
+            this._parentNode = document.querySelector('.game_app');
+            const textDamageNode = document.createElement('div');
+            textDamageNode.className = 'text_damage';
+            const textDamage = document.createTextNode(character.damage.attack);
+            const textPosition = Math.random() * -100;
+            const damageX = monster.position().left + textPosition;
+            const damageY = monster.position().top;
+            textDamageNode.style.transform = `translate(${damageX}px, ${-damageY}px)`;
+            textDamageNode.appendChild(textDamage);
+            this._parentNode.appendChild(textDamageNode);
+            setTimeout(() => {
+                textDamageNode.remove();
+            }, 500);
         };
         this._parentNode = document.querySelector('.game');
         this._element = document.createElement('div');

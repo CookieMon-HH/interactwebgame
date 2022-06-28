@@ -22,7 +22,8 @@ const gameBackground: any = {
 
 const gameProp = {
   screenWidth: window.innerWidth,
-  screenHeight: window.innerHeight
+  screenHeight: window.innerHeight,
+  gameOver: false
 }
 
 const renderGame = () => {
@@ -36,7 +37,14 @@ const renderGame = () => {
     monster.move();
   })
   window.requestAnimationFrame(renderGame);
+}
 
+const endGame = () => {
+  gameProp.gameOver = true;
+  key.keyDown['left'] = false;
+  key.keyDown['right'] = false;
+  key.keyDown['attack'] = false;
+  document.querySelector('.game_over').classList.add('active');
 }
 
 const setGameBackground = () => {
@@ -46,7 +54,8 @@ const setGameBackground = () => {
 
 const windowEvent = () => {
   window.addEventListener('keydown', e => {
-    key.keyDown[key.keyValue[e.which]] = true;
+    if(!gameProp.gameOver)
+      key.keyDown[key.keyValue[e.which]] = true;
   });
 
   window.addEventListener('keyup', e => {

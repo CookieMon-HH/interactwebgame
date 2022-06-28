@@ -8,6 +8,7 @@ interface IMonsterInfo {
   speed: number;
   moveX: number;
   initPositionX: number;
+  crashDamage: number;
 }
 
 class Monster {
@@ -34,7 +35,8 @@ class Monster {
       },
       speed: 10,
       moveX: 0,
-      initPositionX: positionX
+      initPositionX: positionX,
+      crashDamage: 100
     };
     this._hpProgressValue = 0;
     this._hpInner = document.createElement('span');
@@ -90,5 +92,14 @@ class Monster {
       this._monsterInfo.moveX -= this._monsterInfo.speed;
     }
     this._element.style.transform = `translateX(${this._monsterInfo.moveX}px)`
+    this.crash();
+  }
+
+  crash = () => {
+    const rightDiff = 30;
+    const leftDiff = 90;
+    if(character.position().right - rightDiff > this.position().left && character.position().left + leftDiff < this.position().right){
+      character.updateHp(this._monsterInfo.crashDamage);
+    }
   }
 }

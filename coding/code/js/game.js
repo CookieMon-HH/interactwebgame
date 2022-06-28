@@ -18,7 +18,8 @@ const gameBackground = {
 };
 const gameProp = {
     screenWidth: window.innerWidth,
-    screenHeight: window.innerHeight
+    screenHeight: window.innerHeight,
+    gameOver: false
 };
 const renderGame = () => {
     character.keyMotion();
@@ -31,13 +32,21 @@ const renderGame = () => {
     });
     window.requestAnimationFrame(renderGame);
 };
+const endGame = () => {
+    gameProp.gameOver = true;
+    key.keyDown['left'] = false;
+    key.keyDown['right'] = false;
+    key.keyDown['attack'] = false;
+    document.querySelector('.game_over').classList.add('active');
+};
 const setGameBackground = () => {
     let parallaxValue = Math.min(0, (character.moveX - gameProp.screenWidth / 3) * -1);
     gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
 };
 const windowEvent = () => {
     window.addEventListener('keydown', e => {
-        key.keyDown[key.keyValue[e.which]] = true;
+        if (!gameProp.gameOver)
+            key.keyDown[key.keyValue[e.which]] = true;
     });
     window.addEventListener('keyup', e => {
         key.keyDown[key.keyValue[e.which]] = false;

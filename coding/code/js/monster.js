@@ -43,6 +43,14 @@ class Monster {
                 this._monsterInfo.moveX -= this._monsterInfo.speed;
             }
             this._element.style.transform = `translateX(${this._monsterInfo.moveX}px)`;
+            this.crash();
+        };
+        this.crash = () => {
+            const rightDiff = 30;
+            const leftDiff = 90;
+            if (character.position().right - rightDiff > this.position().left && character.position().left + leftDiff < this.position().right) {
+                character.updateHp(this._monsterInfo.crashDamage);
+            }
         };
         this._parentNode = document.querySelector('.game');
         this._element = document.createElement('div');
@@ -58,7 +66,8 @@ class Monster {
             },
             speed: 10,
             moveX: 0,
-            initPositionX: positionX
+            initPositionX: positionX,
+            crashDamage: 100
         };
         this._hpProgressValue = 0;
         this._hpInner = document.createElement('span');
