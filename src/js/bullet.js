@@ -22,9 +22,24 @@ class BulletRender {
         this.el.remove();
     }
 }
+class DamageRender {
+    constructor() {
+        this.el = document.querySelector(".game_app");
+    }
+    render(damage, positionX, positionY) {
+        const textDamageNode = document.createElement('div');
+        textDamageNode.className = 'text_damage';
+        const textDamage = document.createTextNode(`${damage}`);
+        textDamageNode.appendChild(textDamage);
+        this.el.appendChild(textDamageNode);
+        textDamageNode.style.transform = `translate(${positionX}px,${-positionY}px)`;
+        setTimeout(() => textDamageNode.remove(), 500);
+    }
+}
 class Bullet {
     constructor(x, y, direction, attackDamage) {
         this.render = new BulletRender();
+        this.damageRender = new DamageRender();
         this.y = y;
         this.speed = 30;
         this.distance = x;
@@ -55,10 +70,17 @@ class Bullet {
             crashedMonster.updateHp(this.attackDamage, () => {
                 monsters.splice(crashedMonsterIndex, 1);
             });
+            this.renderDamage(crashedMonster);
         }
         if (left > gameProp.screenWidth || right < 0) {
             this.render.remove();
             crashCallback();
         }
+    }
+    renderDamage(monster) {
+        let textPosition = Math.random() * -100;
+        let damageX = monster.position().left + textPosition;
+        let damageY = monster.position().top;
+        this.damageRender.render(this.attackDamage, damageX, damageY);
     }
 }

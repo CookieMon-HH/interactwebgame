@@ -71,6 +71,7 @@ class Monster {
     defaultHpValue: number;
     hpValue: number;
     speed: number;
+    crashDamage: number;
 
     constructor(positionX: number, hp: number) {
         this.defaultHpValue = hp;
@@ -78,6 +79,7 @@ class Monster {
         this.hpRender = new MonsterHpRender();
         this.hpRender.init();
         this.speed = 3;
+        this.crashDamage = 100;
 
         this.render = new MonsterRender(positionX);
         this.render.init(this.hpRender);
@@ -104,5 +106,14 @@ class Monster {
     }
     moveMonster(offsetX: number) {
         this.render.render(this.speed, offsetX);
+    }
+    crash(hero: Hero) {
+        const rightDiff = 30;
+        const leftDiff = 90;
+        const { left: heroLeft, right: heroRight } = hero.position();
+        const { left: monsterLeft, right: monsterRight } = this.position();
+        if(heroRight - rightDiff > monsterLeft && heroLeft + leftDiff < monsterRight) {
+            hero.updateHp(this.crashDamage);
+        }
     }
 }

@@ -19,6 +19,15 @@ class HeroRender {
     attackEnd() {
         this.el.classList.remove("attack");
     }
+    crash() {
+        this.el.classList.add("crash");
+        setTimeout(() => {
+            this.el.classList.remove("crash");
+        }, 400);
+    }
+    dead() {
+        this.el.classList.add("dead");
+    }
     render(movex) {
         if (!(this.el.parentNode instanceof HTMLElement))
             return;
@@ -40,9 +49,21 @@ class HeroRender {
         };
     }
 }
+class HeroInfoRender {
+    constructor() {
+        this.el = document.querySelector('.state_box .hp span');
+    }
+    render(hpProgress) {
+        this.el.style.width = `${hpProgress}%`;
+    }
+}
 class Hero {
     constructor(render) {
+        this.addDeadEvent = (callback) => {
+            this.deadEventCallback = callback;
+        };
         this.render = render;
+        this.heroInfoRender = new HeroInfoRender();
         this.moveX = 0;
         this.speed = 11;
         this.direction = 'right';
@@ -51,6 +72,9 @@ class Hero {
             launch: false,
             arr: [],
         };
+        this.hpProgress = 0;
+        this.hpValue = 10000;
+        this.defaultHpValue = this.hpValue;
     }
     keyMotion(key) {
         const { keyDown } = key;
@@ -90,7 +114,8 @@ class Hero {
         const { width, height } = this.render.size();
         const x = this.direction === 'right' ? this.moveX + width / 2 : this.moveX - width / 2;
         const y = bottom - height / 2;
-        this.bulletComProp.arr.push(new Bullet(x, y, this.direction, this.attackDamage));
+        const hitDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
+        this.bulletComProp.arr.push(new Bullet(x, y, this.direction, hitDamage));
         this.bulletComProp.launch = true;
     }
     attackEnd() {
@@ -98,6 +123,22 @@ class Hero {
     }
     position() {
         return this.render.position();
+    }
+    updateHp(damage) {
+        this.hpValue = Math.max(this.hpValue - damage, 0);
+        this.hpProgress = (this.hpValue / this.defaultHpValue) * 100;
+        this.heroInfoRender.render(this.hpProgress);
+        this.crash();
+        if (this.hpValue === 0) {
+            this.dead();
+        }
+    }
+    crash() {
+        this.render.crash();
+    }
+    dead() {
+        this.render.dead();
+        this.deadEventCallback && this.deadEventCallback();
     }
     get bullets() {
         return this.bulletComProp.arr;
