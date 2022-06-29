@@ -4,8 +4,8 @@ class Bullet{
     y: number;
     speed: number;
     distance: number;
-    parentNode;
-    el;
+    parentNode : Element;
+    el : HTMLDivElement;
     bulletDirection;
     textDamageNode; 
 	textDamage;
