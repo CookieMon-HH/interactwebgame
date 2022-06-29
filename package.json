@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/CookieMon-HH/interactwebgame#readme",
   "devDependencies": {
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.4"
   },
   "directories": {
     "lib": "lib"

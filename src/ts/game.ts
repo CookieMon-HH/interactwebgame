@@ -7,6 +7,10 @@ const key = {
 	}
 }
 
+const allMonsterComProp = {
+	arr: []
+}
+
 const bulletComProp = {
 	launch: false,
 	arr: []
@@ -18,7 +22,8 @@ const gameBackground : any ={
 
 const gameProp = {
 	screenWidth : window.innerWidth,
-	screenHeight : window.innerHeight
+	screenHeight : window.innerHeight,
+	gameOver : false
 }
 
 const renderGame = () => {
@@ -28,8 +33,18 @@ const renderGame = () => {
     bulletComProp.arr.forEach((arr, i) => {
 		arr.moveBullet();
 	});
+	allMonsterComProp.arr.forEach((arr, i) => {
+		arr.moveMonster();
+	});
 	window.requestAnimationFrame(renderGame);
+}
 
+const endGame = () => {
+	gameProp.gameOver = true;
+    key.keyDown['left'] = false;
+    key.keyDown['right'] = false;
+    key.keyDown['attack'] = false;
+	document.querySelector('.game_over').classList.add('active');
 }
 
 const setGameBackground = () => {
@@ -40,13 +55,11 @@ const setGameBackground = () => {
 
 const windowEvent = () => {
 	window.addEventListener('keydown', e => {
-		key.keyDown[key.keyValue[e.which]] = true;
-		hero.keyMotion();
+		if(!gameProp.gameOver) key.keyDown[key.keyValue[e.which]] = true;
 	});
 
 	window.addEventListener('keyup', e => {
 		key.keyDown[key.keyValue[e.which]] = false;
-		hero.keyMotion();
 	});
 
 	window.addEventListener('resize', e => {
@@ -65,8 +78,12 @@ const loadImg = () => {
 }
 
 let hero;
+
 const init = () => {
 	hero = new Hero('.hero');
+	allMonsterComProp.arr[0] = new Monster(700, 7777);
+	allMonsterComProp.arr[1] = new Monster(1500, 5555);
+
     loadImg();
 	windowEvent();
     renderGame();
