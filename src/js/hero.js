@@ -67,13 +67,13 @@ class Hero {
         this.moveX = 0;
         this.speed = 11;
         this.direction = 'right';
-        this.attackDamage = 1000;
+        this.attackDamage = 10000;
         this.bulletComProp = {
             launch: false,
             arr: [],
         };
         this.hpProgress = 0;
-        this.hpValue = 10000;
+        this.hpValue = 100000;
         this.defaultHpValue = this.hpValue;
     }
     keyMotion(key) {
@@ -142,5 +142,9 @@ class Hero {
     }
     get bullets() {
         return this.bulletComProp.arr;
+    }
+    heroUpgrade() {
+        this.speed += 1.3;
+        this.attackDamage += 15000;
     }
 }

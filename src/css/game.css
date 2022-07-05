@@ -9,9 +9,19 @@
 .game_info .hero_state .state_box .hp {width: 100%; height: 10px; border:1px solid #000;}
 .game_info .hero_state .state_box .hp span {display: block; width: 100%; height: 100%; background-color: red; transition: width .3s linear;}
 
+.game_info .score_box {position: absolute; top: 10px; right: 10px; color:#fff; font-size: 18px;}
+
 .game_over {display:none; position: fixed; left:0; top: 0; z-index: 200; width: 100%; height: 100%; background-color: rgba(0,0,0,.5);}
 .game_over.active {display: block;}
 .game_over p {display: flex; height: 100%; align-items: center; justify-content: center; color: #fff; font-size: 150px;}
+
+@keyframes stageStart {
+	0% {opacity: 1;}
+	80% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+.stage_box {position: absolute; left: 50%; top: 50%; z-index: 190; transform: translate(-50%, -50%); color: #fff; font-size: 90px; white-space: nowrap; animation: stageStart 1.5s; animation-fill-mode: both;}
 
 @keyframes hero_idle {
 	from {background-position-x: 0px;}
@@ -48,9 +58,26 @@
 
 .monster_box {position: absolute; left: 700px; bottom: 0px; z-index: 90; width: 280px; height: 294px; will-change: transform;}
 .monster_box.remove {opacity: 0; transition: opacity .2s;}
-.monster_box .monster {height: 100%; background-image: url('/assets//images/monster/monster_green_run.png'); background-size: 2242px 294px; animation: monster_run 1s infinite steps(8);}
+.monster_box .monster {height: 100%; background-image: url('/assets/images/monster/monster_green_run.png'); background-size: 2242px 294px; animation: monster_run 1s infinite steps(8);}
 .monster_box .hp {position: absolute; left: 0; top: 0; width: 100%; height: 10px; border: 2px solid #000; transform: translateY(-100%);}
 .monster_box .hp span {display: block; width: 100%; height: 100%; background: red; transform-origin: 0 0; transform: scaleX(100%); transition: transform .3s;}
+
+.monster_box.yellow_mon .monster {background-image: url('/assets/images/monster/monster_yellow_run.png');}
+.monster_box.pink_mon .monster {background-image: url('/assets/images/monster/monster_pink_run.png');}
+
+@keyframes monster_run_boss {
+	from {background-position-x: 0px;}
+	to {background-position-x: -3600px;}
+}
+
+.monster_box.green_mon_boss {width: 450px; height: 472px;}
+.monster_box.green_mon_boss .monster {background-image: url('/assets/images/monster/monster_green_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
+
+.monster_box.yellow_mon_boss {width: 450px; height: 472px;}
+.monster_box.yellow_mon_boss .monster {background-image: url('/assets/images/monster/monster_yellow_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
+
+.monster_box.pink_mon_boss {width: 450px; height: 472px;}
+.monster_box.pink_mon_boss .monster {background-image: url('/assets/images/monster/monster_pink_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
 
 @keyframes textDamage {
 	0% {opacity: 0; bottom:0;}

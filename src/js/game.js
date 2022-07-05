@@ -12,6 +12,10 @@ const allMonsterComProp = {
 const gameBackground = {
     gameBox: document.querySelector('.game')
 };
+const stageInfo = {
+    stage: new Stage(),
+    totalScore: 0,
+};
 const gameProp = {
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
@@ -30,6 +34,7 @@ const renderGame = () => {
         monster.moveMonster(hero.moveX - hero.position().left);
         monster.crash(hero);
     });
+    stageInfo.stage.clearCheck();
     window.requestAnimationFrame(renderGame);
 };
 const endGame = () => {
@@ -72,8 +77,7 @@ let hero;
 const init = () => {
     hero = new Hero(new HeroRender('.hero'));
     hero.addDeadEvent(endGame);
-    allMonsterComProp.arr[0] = new Monster(700, 9000);
-    allMonsterComProp.arr[1] = new Monster(300, 9000);
+    stageInfo.stage.start(allMonsterComProp.arr, hero);
     loadImg();
     windowEvent();
     renderGame();

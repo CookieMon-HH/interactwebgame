@@ -1,3 +1,65 @@
+enum MonsterType {
+    PINK = 'PINK',
+    YELLOW = 'YELLOW',
+    GREEN = 'GREEN',
+    PINK_BOSS = 'PINK_BOSS',
+    YELLOW_BOSS = 'YELLOW_BOSS',
+    GREEN_BOSS = 'GREEN_BOSS',
+}
+
+interface IMonsterProps {
+    name: string;
+    hpValue: number;
+    speed: number;
+    crashDamage: number;
+    score: number;
+}
+
+const MonsterProps: Record<MonsterType, IMonsterProps> = {
+    PINK: {
+        name: 'pink_mon',
+        hpValue: 200000,
+        speed: 4,
+        crashDamage: 300,
+        score: 3000,
+    },
+    GREEN: {
+        name: 'green_mon',
+        hpValue: 44000,
+        speed: 4,
+        crashDamage: 300,
+        score: 1000,
+    },
+    YELLOW: {
+        name: 'yellow_mon',
+        hpValue: 84000,
+        speed: 4,
+        crashDamage: 300,
+        score: 2000,
+    },
+    PINK_BOSS: {
+        name: 'pink_mon_boss',
+        hpValue: 5200000,
+        speed: 3,
+        crashDamage: 2000,
+        score: 30000,
+    },
+    GREEN_BOSS: {
+        name: 'green_mon_boss',
+        hpValue: 800000,
+        speed: 4,
+        crashDamage: 1000,
+        score: 10000,
+    },
+    YELLOW_BOSS: {
+        name: 'yellow_mon_boss',
+        hpValue: 1800000,
+        speed: 4,
+        crashDamage: 2000,
+        score: 20000,
+    }
+}
+
 class MonsterRender {
     parentNode: HTMLElement;
     el: HTMLElement;
@@ -5,10 +67,10 @@ class MonsterRender {
     positionX: number;
     moveX: number;
 
-    constructor(positionX: number) {
+    constructor(positionX: number, name: string) {
         this.parentNode = document.querySelector('.game');
         this.el = document.createElement('div');
-        this.el.className = 'monster_box';
+        this.el.className = `monster_box ${name}`;
         this.elChildren = document.createElement('div');
         this.elChildren.className = 'monster';
         this.positionX = positionX;
@@ -37,7 +99,7 @@ class MonsterRender {
         this.el.classList.add('remove');
     }
     render(speed: number, offsetX: number) {
-        if(this.positionX + this.moveX + this.el.offsetWidth - offsetX <= 0) {
+        if (this.positionX + this.moveX + this.el.offsetWidth - offsetX <= 0) {
             this.moveX = offsetX - this.positionX + gameProp.screenWidth;
         } else {
             this.moveX -= speed;
@@ -72,16 +134,19 @@ class Monster {
     hpValue: number;
     speed: number;
     crashDamage: number;
+    score: number;
 
-    constructor(positionX: number, hp: number) {
-        this.defaultHpValue = hp;
-        this.hpValue = hp;
+    constructor(positionX: number, monsterType: MonsterType) {
+        const monsterProps = MonsterProps[monsterType];
+        this.defaultHpValue = monsterProps.hpValue;
+        this.hpValue = monsterProps.hpValue;
         this.hpRender = new MonsterHpRender();
         this.hpRender.init();
-        this.speed = 3;
-        this.crashDamage = 100;
+        this.speed = monsterProps.speed;
+        this.crashDamage = monsterProps.crashDamage;
+        this.score = monsterProps.score;
 
-        this.render = new MonsterRender(positionX);
+        this.render = new MonsterRender(positionX, monsterProps.name);
         this.render.init(this.hpRender);
     }
 
@@ -96,13 +161,14 @@ class Monster {
     updateHp(attackDamage: number, deadCallback: Function) {
         this.hpValue = Math.max(this.hpValue - attackDamage, 0);
         this.hpRender.updateHp(this.hpRate);
-        if(this.hpValue === 0) {
+        if (this.hpValue === 0) {
             this.dead(deadCallback);
         }
     }
     dead(deadCallback: Function) {
         this.render.dead();
         deadCallback();
+        this.setScore();
     }
     moveMonster(offsetX: number) {
         this.render.render(this.speed, offsetX);
@@ -112,8 +178,15 @@ class Monster {
         const leftDiff = 90;
         const { left: heroLeft, right: heroRight } = hero.position();
         const { left: monsterLeft, right: monsterRight } = this.position();
-        if(heroRight - rightDiff > monsterLeft && heroLeft + leftDiff < monsterRight) {
+        if (heroRight - rightDiff > monsterLeft && heroLeft + leftDiff < monsterRight) {
             hero.updateHp(this.crashDamage);
+        }
+    }
+    setScore() {
+        stageInfo.totalScore += this.score;
+        const el = document.querySelector<HTMLDivElement>('.score_box');
+        if(el) {
+            el.innerText = `${stageInfo.totalScore}`;
         }
     }
 }
