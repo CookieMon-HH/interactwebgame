@@ -8,9 +8,20 @@
 .game_info .tank_state .state_box .hp {width: 100%; height: 10px; border:1px solid #000;}
 .game_info .tank_state .state_box .hp span {display: block; width: 100%; height: 100%; background-color: red; transition: width .3s linear;}
 
+.game_info .score_box {position: absolute; top: 10px; right: 10px; color:#fff; font-size: 18px;}
+
 .game_over {display:none; position: fixed; left:0; top: 0; z-index: 200; width: 100%; height: 100%; background-color: rgba(0,0,0,.5);}
 .game_over.active {display: block;}
 .game_over p {display: flex; height: 100%; align-items: center; justify-content: center; color: #fff; font-size: 150px;}
+
+@keyframes stageStart {
+	0% {opacity: 1;}
+	80% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+.stage_box {position: absolute; left: 50%; top: 50%; z-index: 190; transform: translate(-50%, -50%); color: #fff; font-size: 90px; white-space: nowrap; animation: stageStart 1.5s; animation-fill-mode: both;}
+
 
 /* keyframes : 애니메이션 구간을 정하고 어떤 스타일을 적용시킬지 정하는 문법 (name, 구간,스타일로 구성) */
 @keyframes tank_basic {
@@ -61,6 +72,23 @@
 .monster_box .monster.flip {transform: rotateY(180deg);}
 .monster_box .hp {position: absolute; left:0; top:0; width: 100%; height: 10px; border:2px solid #000; transform: translateY(-100%);}
 .monster_box .hp span {display: block; width: 100%; height: 100%; background: red; transition: width .3s linear;}
+
+.monster_box.yellow_mon .monster {background-image: url('../../../lib/images/monster/monster_yellow_run.png');}
+.monster_box.pink_mon .monster {background-image: url('../../../lib/images/monster/monster_pink_run.png');}
+
+@keyframes monster_run_boss {
+	from { background-position: 0px; }
+	to { background-position: -3600px; }
+}
+
+.monster_box.green_mon_boss {width: 450px; height: 472px;}
+.monster_box.green_mon_boss .monster {background-image: url('../../../lib/images/monster/monster_green_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
+
+.monster_box.yellow_mon_boss {width: 450px; height: 472px;}
+.monster_box.yellow_mon_boss .monster {background-image: url('../../../lib/images/monster/monster_yellow_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
+
+.monster_box.pink_mon_boss {width: 450px; height: 472px;}
+.monster_box.pink_mon_boss .monster {background-image: url('../../../lib/images/monster/monster_pink_run.png'); background-size: 3600px 472px; animation: monster_run_boss 1s infinite steps(8);}
 
 @keyframes textDamage {
 	0% {opacity: 0; bottom:0;}

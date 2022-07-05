@@ -31,7 +31,7 @@ class Tank {
         //다른이름(basicfunction)으로 instance로 만들면 안되고 같은 이름으로 만들때만 되네?.. 왜그러지?
         this.attackDamage = 1000;
         this.hpProgress = 0;
-		this.hpValue = 10000;
+		this.hpValue = 100000;
 		this.defaultHpValue = this.hpValue;
 		this.realDamage = 0;
     }
@@ -140,6 +140,10 @@ class Tank {
     hitDamage(){
 		this.realDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
 	}
+    tankUpgrade(){
+		this.speed += 1.3;
+		this.attackDamage += 1500;
+	}
 }
 
 class Bullet {
@@ -226,24 +230,26 @@ class Monster {
     crashDamage: number;
     textDamageNode;
     textDamage;
+    score: number;
     
-    constructor(moveX,moveY,hp){
+    constructor(property, moveX,moveY){
         this.parentNode = document.querySelector('.game');
         this.el = document.createElement('div');
-        this.el.className = 'monster_box';
+        this.el.className = 'monster_box '+property.name;
         this.elChildren = document.createElement('div');
         this.elChildren.className = 'monster';
         this.hpNode = document.createElement('div');
         this.hpNode.className = 'hp';
-        this.hpValue = hp;
-        this.defaultHpValue = hp;
+        this.hpValue = property.hpValue;
+        this.defaultHpValue = property.hpValue;
         this.hpInner = document.createElement('span');
         this.progress = 0;
-        this.moveX = moveX ;
-        this.moveY = moveY ;
-        this.speed = 5;
-        this.crashDamage = 100;
-
+        this.moveX = moveX;
+        this.moveY = moveY;
+        this.speed = property.speed;
+        this.crashDamage = property.crashDamage;
+        this.score = property.score;
+        
         this.init();
     }
     init(){
@@ -273,7 +279,7 @@ class Monster {
         this.el.classList.add('remove');
         setTimeout(()=> this.el.remove(),200);
         allMonsterComProp.arr.splice(index,1);
-
+        gameevent.setScore(this.score);
     }
     moveMonster(){
         if(this.moveX > tank.movex){
@@ -352,4 +358,79 @@ class gameEvent {
             }
         }
     }
+
+    setScore(score){ 
+		stageInfo.totalScore += score;
+        const scorebox = document.querySelector('.score_box') as HTMLElement
+		scorebox.innerText = String(stageInfo.totalScore);
+	}
+}
+
+class Stage {
+    level: number;
+    isStart: boolean;
+    isGenEnd: boolean;
+    parentNode;
+    textBox;
+    textNode;
+    count: number;
+
+	constructor(){
+		this.level = 0;
+		this.isStart = false;
+        this.isGenEnd = false;
+        this.count = 0 ;
+		this.stageStart();
+	}
+	stageStart(){
+		setTimeout( () => {
+			this.isStart = true;
+			this.stageGuide(`START LEVEL${this.level+1}`);
+			this.callMonster();
+		}, 2000);
+	}
+	stageGuide(text){
+		this.parentNode = document.querySelector('.game_app');
+		this.textBox = document.createElement('div');
+		this.textBox.className = 'stage_box';
+		this.textNode = document.createTextNode(text);
+		this.textBox.appendChild(this.textNode);
+		this.parentNode.appendChild(this.textBox);
+
+		setTimeout(() => this.textBox.remove(), 1500);
+	}
+	callMonster(){
+        var genMonster = setInterval(()=> {
+            this.count = this.count+1;
+            if(this.count===4){
+                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].bossMon,1500,-1500));
+                clearInterval(genMonster);
+                this.isGenEnd = true;
+                this.count = 0;
+            }else {
+                console.log('else')
+                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon,2000,-2000));
+                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon,1000,-1000));
+                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon,2000,-1000));
+                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon,1000,-2000));
+            }
+        },3000)
+
+	}
+	clearCheck(){
+        //몬스터가 모두 나왔을 때 0이면 clear
+		if(allMonsterComProp.arr.length === 0 && this.isStart && this.isGenEnd){
+			this.isStart = false;
+            this.isGenEnd = false;
+			this.level++;
+
+			if(this.level < stageInfo.monster.length){
+				this.stageGuide('CLEAR!!');
+				this.stageStart();
+				tank.tankUpgrade();
+			}else {
+				this.stageGuide('ALL CLEAR!!');
+			}
+		}
+	}
 }
