@@ -71,6 +71,14 @@
     transition: width .3s linear
 }
 
+.game_info .score_box {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #fff;
+    font-size: 18px;
+}
+
 .game_over {
     display: none;
     position: fixed;
@@ -93,6 +101,25 @@
     justify-content: center;
     color: #fff;
     font-size: 150px;
+}
+
+@keyframes stageStart {
+    0% { opacity: 1;}
+    80% { opacity: 1;}
+    100% { opacity: 0;}
+}
+
+.stage_box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 190;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 90px;
+    white-space: nowrap;
+    animation: step-start 1.5s;
+    animation-fill-mode: both;
 }
 
 @keyframes character_idle {
@@ -240,6 +267,52 @@
     height: 100%;
     background: red;
     transition: width .3s linear;
+}
+
+.monster_box.yellow_mon .monster {
+    background-image: url("../../../lib/images/monster/monster_yellow_run.png");
+}
+
+.monster_box.pink_mon .monster {
+    background-image: url("../../../lib/images/monster/monster_pink_run.png");
+}
+
+@keyframes monster_run_boss {
+    from {background-position-x: 0px;}
+    to {background-position-x: -3600px;}
+}
+
+.monster_box.green_mon_boss {
+    width: 450px;
+    height: 472px;
+}
+
+.monster_box.green_mon_boss .monster {
+    background-image: url("../../../lib/images/monster/monster_green_run.png");
+    background-size: 3600px 472px;
+    animation: monster_run_boss 1s infinite steps(8);
+}
+
+.monster_box.yellow_mon_boss {
+    width: 450px;
+    height: 472px;
+}
+
+.monster_box.yellow_mon_boss .monster {
+    background-image: url("../../../lib/images/monster/monster_yellow_run.png");
+    background-size: 3600px 472px;
+    animation: monster_run_boss 1s infinite steps(8);
+}
+
+.monster_box.pink_mon_boss {
+    width: 450px;
+    height: 472px;
+}
+
+.monster_box.pink_mon_boss .monster {
+    background-image: url("../../../lib/images/monster/monster_pink_run.png");
+    background-size: 3600px 472px;
+    animation: monster_run_boss 1s infinite steps(8);
 }
 
 @keyframes textDamage {

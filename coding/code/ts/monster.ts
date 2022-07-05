@@ -9,6 +9,8 @@ interface IMonsterInfo {
   moveX: number;
   initPositionX: number;
   crashDamage: number;
+  className: string;
+  score: number;
 }
 
 class Monster {
@@ -20,27 +22,18 @@ class Monster {
   private _monsterInfo: IMonsterInfo;
   private _hpProgressValue: number;
 
-  constructor(positionX: number, maxHp: number) {
+  constructor(monsterInfo: IMonsterInfo) {
+    this._monsterInfo = monsterInfo;
     this._parentNode = document.querySelector('.game');
     this._element = document.createElement('div');
-    this._element.className = 'monster_box';
+    this._element.className = 'monster_box ' + this._monsterInfo.className;
     this._elementChild = document.createElement('div');
     this._elementChild.className = 'monster';
     this._hpNode = document.createElement('div');
     this._hpNode.className = 'hp';
-    this._monsterInfo = {
-      hp: {
-        max: maxHp,
-        current: maxHp,
-      },
-      speed: 10,
-      moveX: 0,
-      initPositionX: positionX,
-      crashDamage: 100
-    };
     this._hpProgressValue = 0;
     this._hpInner = document.createElement('span');
-    this.init(positionX);
+    this.init(this._monsterInfo.initPositionX);
   }
 
   init = (positionX: number) => {
@@ -74,12 +67,19 @@ class Monster {
 
   }
 
+  setScore = () => {
+    stageInfo.totalScore += this._monsterInfo.score;
+    const tempElem: HTMLDivElement = document.querySelector('.score_box');
+    tempElem.innerText = stageInfo.totalScore.toString();
+  }
+
   dead = (currentIdx: number) => {
     this._element.classList.add('remove');
     setTimeout(() => {
       this._element.remove();
     }, 200);
     allMonsterComProp.arr.splice(currentIdx, 1);
+    this.setScore();
   }
 
   move = () => {

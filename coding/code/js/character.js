@@ -69,18 +69,21 @@ class Character {
         this.hitDamage = () => {
             this._damage.attack = this._damage.defaultAttack - Math.round(Math.random() * this._damage.defaultAttack * 0.1);
         };
+        this.characterLevelUp = () => {
+            this._speed += 2;
+        };
         this._element = document.querySelector(element);
         this._moveX = 0;
         this._speed = 12;
         this._direction = "RIGHT" /* CharacterDirection.RIGHT */;
         this._damage = {
-            attack: 1000,
-            defaultAttack: 1000
+            attack: 100000,
+            defaultAttack: 100000
         };
         this._hpInfo = {
             hpProgress: 0,
-            currentHp: 10000,
-            defaultHp: 10000
+            currentHp: 1000000,
+            defaultHp: 1000000
         };
     }
     get direction() {

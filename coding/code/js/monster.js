@@ -1,5 +1,5 @@
 class Monster {
-    constructor(positionX, maxHp) {
+    constructor(monsterInfo) {
         this.init = (positionX) => {
             this._hpNode.appendChild(this._hpInner);
             this._element.appendChild(this._hpNode);
@@ -25,12 +25,18 @@ class Monster {
                 this.dead(currentIdx);
             }
         };
+        this.setScore = () => {
+            stageInfo.totalScore += this._monsterInfo.score;
+            const tempElem = document.querySelector('.score_box');
+            tempElem.innerText = stageInfo.totalScore.toString();
+        };
         this.dead = (currentIdx) => {
             this._element.classList.add('remove');
             setTimeout(() => {
                 this._element.remove();
             }, 200);
             allMonsterComProp.arr.splice(currentIdx, 1);
+            this.setScore();
         };
         this.move = () => {
             const calcValue = this._monsterInfo.moveX + this._monsterInfo.initPositionX +
@@ -52,25 +58,16 @@ class Monster {
                 character.updateHp(this._monsterInfo.crashDamage);
             }
         };
+        this._monsterInfo = monsterInfo;
         this._parentNode = document.querySelector('.game');
         this._element = document.createElement('div');
-        this._element.className = 'monster_box';
+        this._element.className = 'monster_box ' + this._monsterInfo.className;
         this._elementChild = document.createElement('div');
         this._elementChild.className = 'monster';
         this._hpNode = document.createElement('div');
         this._hpNode.className = 'hp';
-        this._monsterInfo = {
-            hp: {
-                max: maxHp,
-                current: maxHp,
-            },
-            speed: 10,
-            moveX: 0,
-            initPositionX: positionX,
-            crashDamage: 100
-        };
         this._hpProgressValue = 0;
         this._hpInner = document.createElement('span');
-        this.init(positionX);
+        this.init(this._monsterInfo.initPositionX);
     }
 }
