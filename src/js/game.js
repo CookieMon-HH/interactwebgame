@@ -3,7 +3,8 @@ const key = {
     keyValue: {
         37: 'left',
         39: 'right',
-        88: 'attack'
+        88: 'attack',
+        67: 'slide'
     }
 };
 const allMonsterComProp = {
@@ -15,6 +16,16 @@ const bulletComProp = {
 };
 const gameBackground = {
     gameBox: document.querySelector('.game')
+};
+const stageInfo = {
+    stage: [],
+    totalScore: 0,
+    monster: [
+        { defaultMon: greenMon, bossMon: greenMonBoss },
+        { defaultMon: yellowMon, bossMon: yellowMonBoss },
+        { defaultMon: pinkMon, bossMon: pinkMonBoss }
+    ],
+    callPosition: [1000, 5000, 9000]
 };
 const gameProp = {
     screenWidth: window.innerWidth,
@@ -30,13 +41,14 @@ const renderGame = () => {
     allMonsterComProp.arr.forEach((arr, i) => {
         arr.moveMonster();
     });
+    stageInfo.stage.clearCheck();
     window.requestAnimationFrame(renderGame);
 };
 const endGame = () => {
     gameProp.gameOver = true;
     key.keyDown['left'] = false;
     key.keyDown['right'] = false;
-    key.keyDown['attack'] = false;
+    //key.keyDown['attack'] = false;
     document.querySelector('.game_over').classList.add('active');
 };
 const setGameBackground = () => {
@@ -67,8 +79,9 @@ const loadImg = () => {
 let hero;
 const init = () => {
     hero = new Hero('.hero');
-    allMonsterComProp.arr[0] = new Monster(700, 7777);
-    allMonsterComProp.arr[1] = new Monster(1500, 5555);
+    stageInfo.stage = new Stage();
+    //allMonsterComProp.arr[0] = new Monster(700, 7777);
+    //allMonsterComProp.arr[1] = new Monster(1500, 5555);
     loadImg();
     windowEvent();
     renderGame();
