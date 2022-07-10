@@ -4,14 +4,16 @@ const key = {
         right : false,
         up : false,
         down : false,
-        attack : false
+        attack : false,
+        dash : false
     },
     keyValue : {
         37 : 'left',
         38 : 'up',
         39 : 'right',
         40 : 'down',
-        88 : 'attack'
+        88 : 'attack',
+        67 : 'dash'
     }
 }
 

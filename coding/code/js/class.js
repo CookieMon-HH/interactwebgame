@@ -14,9 +14,17 @@ class Tank {
         //다른이름(basicfunction)으로 instance로 만들면 안되고 같은 이름으로 만들때만 되네?.. 왜그러지?
         this.attackDamage = 1000;
         this.hpProgress = 0;
-        this.hpValue = 100000;
-        this.defaultHpValue = this.hpValue;
+        this.maxHpValue = 100000;
+        this.hpValue = this.maxHpValue;
         this.realDamage = 0;
+        this.dashSpeed = 14;
+        this.dashDown = false;
+        this.dashTime = 0;
+        this.dashMaxTime = 30;
+        this.level = 1;
+        this.exp = 0;
+        this.maxExp = 3000;
+        this.expProgress = 0;
     }
     // constructor 다시 공부해보자
     checkdirection() {
@@ -76,6 +84,28 @@ class Tank {
             this.el.classList.remove('attack');
             bulletComProp.launch = false;
         }
+        if (key.keyDown['dash']) {
+            if (!this.dashDown) {
+                this.el.classList.add('dash');
+                this.rotateangle = rotateanglelist[this.directionstatus];
+                this.deltaX = this.dashSpeed * Math.cos(degtorad(this.rotateangle));
+                this.deltaY = -1 * this.dashSpeed * Math.sin(degtorad(this.rotateangle));
+                this.tankMaxRangeX = gameProp.fieldMaxRangeX - this.el.offsetWidth;
+                this.tankMaxRangeY = gameProp.fieldMaxRangeY - this.el.offsetHeight;
+                this.movex = Math.min(this.tankMaxRangeX, Math.max(0, this.movex + this.deltaX));
+                this.movey = Math.max(-1 * this.tankMaxRangeY, Math.min(0, this.movey + this.deltaY));
+                if (this.dashTime > this.dashMaxTime) {
+                    this.el.classList.remove('dash');
+                    this.dashDown = true;
+                }
+                this.dashTime += 1;
+            }
+        }
+        if (!key.keyDown['dash']) {
+            this.el.classList.remove('dash');
+            this.dashDown = false;
+            this.dashTime = 0;
+        }
         if (!gameProp.gameOver) {
             this.el.style.transform = `rotate(${this.rotateangle}deg)`;
             this.el.parentNode.style.transform = `translate3d(${this.movex}px, ${this.movey}px , 0)`;
@@ -95,12 +125,17 @@ class Tank {
             height: this.el.offsetHeight
         };
     }
-    updateHp(monsterDamage) {
+    updateHp(type, amount) {
+        if (type == 'minus') {
+            this.hpValue = Math.max(0, this.hpValue - amount);
+            this.crash();
+        }
+        else if (type == 'plus') {
+            this.hpValue = Math.min(this.maxHpValue, this.hpValue + amount);
+        }
+        this.hpProgress = this.hpValue / this.maxHpValue * 100;
         const tankHpBox = document.querySelector('.state_box .hp span');
-        this.hpValue = Math.max(0, this.hpValue - monsterDamage);
-        this.hpProgress = this.hpValue / this.defaultHpValue * 100;
         tankHpBox.style.width = this.hpProgress + '%';
-        this.crash();
         if (this.hpValue === 0) {
             this.dead();
         }
@@ -118,7 +153,29 @@ class Tank {
     }
     tankUpgrade() {
         this.speed += 1.3;
-        this.attackDamage += 1500;
+        this.attackDamage += 500;
+    }
+    updateExp(exp) {
+        this.exp += exp;
+        this.expProgress = this.exp / this.maxExp * 100;
+        const expbox = document.querySelector('.tank_state .exp span');
+        expbox.style.width = this.expProgress + '%';
+        if (this.exp >= this.maxExp) {
+            this.levelUp();
+        }
+    }
+    levelUp() {
+        this.level += 1;
+        this.exp = 0;
+        this.maxExp = this.maxExp + this.level * 1000;
+        const levelbox = document.querySelector('.level_box strong');
+        levelbox.innerText = String(this.level);
+        const levelGuide = document.querySelector('.tank_box .level_up');
+        levelGuide.classList.add('active');
+        setTimeout(() => levelGuide.classList.remove('active'), 1000);
+        this.updateExp(this.exp);
+        this.tankUpgrade();
+        this.updateHp('plus', this.maxHpValue - this.hpValue);
     }
 }
 class Bullet {
@@ -175,7 +232,7 @@ class Bullet {
     }
 }
 class Monster {
-    constructor(property, moveX, moveY) {
+    constructor(property, { locationX, locationY }) {
         this.parentNode = document.querySelector('.game');
         this.el = document.createElement('div');
         this.el.className = 'monster_box ' + property.name;
@@ -187,11 +244,12 @@ class Monster {
         this.defaultHpValue = property.hpValue;
         this.hpInner = document.createElement('span');
         this.progress = 0;
-        this.moveX = moveX;
-        this.moveY = moveY;
+        this.moveX = locationX;
+        this.moveY = locationY;
         this.speed = property.speed;
         this.crashDamage = property.crashDamage;
         this.score = property.score;
+        this.exp = property.exp;
         this.init();
     }
     init() {
@@ -221,6 +279,7 @@ class Monster {
         setTimeout(() => this.el.remove(), 200);
         allMonsterComProp.arr.splice(index, 1);
         gameevent.setScore(this.score);
+        tank.updateExp(this.exp);
     }
     moveMonster() {
         if (this.moveX > tank.movex) {
@@ -258,7 +317,7 @@ class gameEvent {
     }
     init() {
     }
-    rectOvlerapChecker(mainElem, targetElem, right_tol, left_tol, top_tol, bottom_tol) {
+    rectOvlerapChecker(mainElem, targetElem, { right_tol, left_tol, top_tol, bottom_tol }) {
         if (mainElem.position().left < targetElem.position().right - right_tol
             && mainElem.position().right > targetElem.position().left + left_tol
             && mainElem.position().top > targetElem.position().bottom + bottom_tol
@@ -277,7 +336,7 @@ class gameEvent {
     bulletcrash() {
         for (let j = 0; j < allMonsterComProp.arr.length; j++) {
             for (let i = 0; i < bulletComProp.arr.length; i++) {
-                if (this.rectOvlerapChecker(bulletComProp.arr[i], allMonsterComProp.arr[j], 0, 0, 0, 0)) {
+                if (this.rectOvlerapChecker(bulletComProp.arr[i], allMonsterComProp.arr[j], { right_tol: 0, left_tol: 0, top_tol: 0, bottom_tol: 0 })) {
                     tank.hitDamage();
                     bulletComProp.arr[i].removeBullet();
                     bulletComProp.arr.splice(i, 1);
@@ -292,8 +351,8 @@ class gameEvent {
     //monster -> tank crash 
     monstercrash() {
         for (let j = 0; j < allMonsterComProp.arr.length; j++) {
-            if (this.rectOvlerapChecker(allMonsterComProp.arr[j], tank, 30, 30, 30, 30)) {
-                tank.updateHp(allMonsterComProp.arr[j].crashDamage);
+            if (this.rectOvlerapChecker(allMonsterComProp.arr[j], tank, { right_tol: 30, left_tol: 30, top_tol: 30, bottom_tol: 30 })) {
+                tank.updateHp('minus', allMonsterComProp.arr[j].crashDamage);
             }
         }
     }
@@ -315,7 +374,7 @@ class Stage {
         setTimeout(() => {
             this.isStart = true;
             this.stageGuide(`START LEVEL${this.level + 1}`);
-            this.callMonster();
+            this.callMonster(10, stageInfo.monster[this.level]);
         }, 2000);
     }
     stageGuide(text) {
@@ -327,23 +386,21 @@ class Stage {
         this.parentNode.appendChild(this.textBox);
         setTimeout(() => this.textBox.remove(), 1500);
     }
-    callMonster() {
+    callMonster(monsterNum, monsterType) {
+        var GenLocationX = [0, gameProp.fieldMaxRangeX / 2, gameProp.fieldMaxRangeX];
+        var GenLocationY = [0, -gameProp.fieldMaxRangeY / 2, -gameProp.fieldMaxRangeY];
         var genMonster = setInterval(() => {
             this.count = this.count + 1;
-            if (this.count === 4) {
-                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].bossMon, 1500, -1500));
+            if (this.count === monsterNum - 1) {
+                allMonsterComProp.arr.push(new Monster(monsterType.bossMon, { locationX: 1500, locationY: -1500 }));
                 clearInterval(genMonster);
                 this.isGenEnd = true;
                 this.count = 0;
             }
             else {
-                console.log('else');
-                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon, 2000, -2000));
-                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon, 1000, -1000));
-                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon, 2000, -1000));
-                allMonsterComProp.arr.push(new Monster(stageInfo.monster[this.level].defaultMon, 1000, -2000));
+                allMonsterComProp.arr.push(new Monster(monsterType.defaultMon, { locationX: GenLocationX[Math.floor(Math.random() * 2.99)], locationY: GenLocationY[Math.floor(Math.random() * 2.99)] }));
             }
-        }, 3000);
+        }, 1000);
     }
     clearCheck() {
         //몬스터가 모두 나왔을 때 0이면 clear
