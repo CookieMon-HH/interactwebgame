@@ -30,6 +30,9 @@ class Monster {
             const tempElem = document.querySelector('.score_box');
             tempElem.innerText = stageInfo.totalScore.toString();
         };
+        this.setExp = () => {
+            character.updateExp(this._monsterInfo.exp);
+        };
         this.dead = (currentIdx) => {
             this._element.classList.add('remove');
             setTimeout(() => {
@@ -37,6 +40,7 @@ class Monster {
             }, 200);
             allMonsterComProp.arr.splice(currentIdx, 1);
             this.setScore();
+            this.setExp();
         };
         this.move = () => {
             const calcValue = this._monsterInfo.moveX + this._monsterInfo.initPositionX +
@@ -55,7 +59,7 @@ class Monster {
             const rightDiff = 30;
             const leftDiff = 90;
             if (character.position().right - rightDiff > this.position().left && character.position().left + leftDiff < this.position().right) {
-                character.updateHp(this._monsterInfo.crashDamage);
+                character.minusHp(this._monsterInfo.crashDamage);
             }
         };
         this._monsterInfo = monsterInfo;

@@ -46,8 +46,17 @@
 }
 
 .game_info .character_state .character_img {
+    position: relative;
     float: left;
     width: 20%;
+}
+
+.game_info .character_state .character_img .level_box {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    font-size: 14px;
+    color: #ffffff;
 }
 
 .game_info .character_state .state_box {
@@ -68,6 +77,21 @@
     width: 100%;
     height: 100%;
     background-color: red;
+    transition: width .3s linear
+}
+
+.game_info .character_state .state_box .exp {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+    border: 1px solid #000;
+}
+
+.game_info .character_state .state_box .exp span {
+    display: block;
+    width: 0%;
+    height: 100%;
+    background-color: yellow;
     transition: width .3s linear
 }
 
@@ -158,6 +182,30 @@
     }
 }
 
+@keyframes character_slide {
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: -1498px;
+    }
+}
+
+@keyframes character_level_up {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+
 .character_box {
     position: fixed;
     left: 0;
@@ -204,6 +252,29 @@
     background-size: 150px 182px;
     animation: none;
     transform: rotate(-100deg);
+}
+
+.character_box .character.slide {
+    background-image: url('../../../lib/images/ninja_slide.png');
+    background-size: 1498px 182px;
+    animation: character_slide 0.7s 1 steps(10);
+}
+
+.character_box .level_up {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 200px;
+    height: 42px;
+    background-image: url("../../../lib/images/levelup.png");
+    background-size: cover;
+    transform: translateX(-50%);
+    opacity: 0;
+}
+
+.character .level_up.active {
+    animation: character_level_up 1s linear;
+    animation-fill-mode: both;
 }
 
 .character_bullet {

@@ -3,7 +3,8 @@ const key = {
   keyValue: {
     37: 'left',
     39: 'right',
-    88: 'attack'
+    67: 'slide',
+    88: 'attack',
   }
 }
 let character;
@@ -21,7 +22,8 @@ const pinkMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo
       initPositionX: gameProp.screenWidth + 500,
       crashDamage: 100,
       className: 'pink_mon_boss',
-      score: 4000
+      score: 4000,
+      exp: 1000
     }
   }
   return {
@@ -34,7 +36,8 @@ const pinkMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo
     initPositionX: gameProp.screenWidth + 700,
     crashDamage: 300,
     className: 'pink_mon',
-    score: 1000
+    score: 1000,
+    exp: 100
   }
 }
 
@@ -50,7 +53,8 @@ const yellowMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterIn
       initPositionX: gameProp.screenWidth + 200,
       crashDamage: 2000,
       className: 'yellow_mon_boss',
-      score: 5000
+      score: 5000,
+      exp: 2000
     }
   }
   return {
@@ -63,7 +67,8 @@ const yellowMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterIn
     initPositionX: gameProp.screenWidth + 900,
     crashDamage: 200,
     className: 'yellow_mon',
-    score: 2000
+    score: 2000,
+    exp: 200
   }
 }
 
@@ -79,7 +84,8 @@ const greenMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInf
       initPositionX: gameProp.screenWidth + 400,
       crashDamage: 1000,
       className: 'green_mon_boss',
-      score: 6000
+      score: 6000,
+      exp: 3000
     }
   }
   return {
@@ -92,7 +98,8 @@ const greenMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInf
     initPositionX: gameProp.screenWidth + 1200,
     crashDamage: 100,
     className: 'green_mon',
-    score: 3000
+    score: 3000,
+    exp: 300
   }
 }
 
@@ -109,7 +116,7 @@ const gameBackground: any = {
   gameBox: document.querySelector('.game')
 }
 
-const stageInfo : {totalScore : number, stage : Stage[], monster: {defaultMonster: (moveX : number) => IMonsterInfo, bossMonster: (moveX : number) => IMonsterInfo}[]} = {
+const stageInfo : {totalScore : number, stage : Stage[], monster: {defaultMonster: (moveX : number) => IMonsterInfo, bossMonster: (moveX : number) => IMonsterInfo}[], callPosition : number[]} = {
   totalScore : 0,
   stage: [],
   monster: [
@@ -125,7 +132,8 @@ const stageInfo : {totalScore : number, stage : Stage[], monster: {defaultMonste
       defaultMonster: (moveX : number) => pinkMonster(moveX || 0),
       bossMonster: (moveX : number) => pinkMonster(moveX || 0, true)
     }
-  ]
+  ],
+  callPosition : [1000, 2000, 3000]
 }
 
 const gameProp = {

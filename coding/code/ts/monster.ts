@@ -11,6 +11,7 @@ interface IMonsterInfo {
   crashDamage: number;
   className: string;
   score: number;
+  exp: number;
 }
 
 class Monster {
@@ -73,6 +74,10 @@ class Monster {
     tempElem.innerText = stageInfo.totalScore.toString();
   }
 
+  setExp = () => {
+    character.updateExp(this._monsterInfo.exp);
+  }
+
   dead = (currentIdx: number) => {
     this._element.classList.add('remove');
     setTimeout(() => {
@@ -80,6 +85,7 @@ class Monster {
     }, 200);
     allMonsterComProp.arr.splice(currentIdx, 1);
     this.setScore();
+    this.setExp();
   }
 
   move = () => {
@@ -99,7 +105,7 @@ class Monster {
     const rightDiff = 30;
     const leftDiff = 90;
     if(character.position().right - rightDiff > this.position().left && character.position().left + leftDiff < this.position().right){
-      character.updateHp(this._monsterInfo.crashDamage);
+      character.minusHp(this._monsterInfo.crashDamage);
     }
   }
 }
