@@ -14,6 +14,7 @@ const MonsterProps = {
         speed: 4,
         crashDamage: 300,
         score: 3000,
+        exp: 3000,
     },
     GREEN: {
         name: 'green_mon',
@@ -21,6 +22,7 @@ const MonsterProps = {
         speed: 4,
         crashDamage: 300,
         score: 1000,
+        exp: 1000,
     },
     YELLOW: {
         name: 'yellow_mon',
@@ -28,6 +30,7 @@ const MonsterProps = {
         speed: 4,
         crashDamage: 300,
         score: 2000,
+        exp: 2000,
     },
     PINK_BOSS: {
         name: 'pink_mon_boss',
@@ -35,6 +38,7 @@ const MonsterProps = {
         speed: 3,
         crashDamage: 2000,
         score: 30000,
+        exp: 30000,
     },
     GREEN_BOSS: {
         name: 'green_mon_boss',
@@ -42,6 +46,7 @@ const MonsterProps = {
         speed: 4,
         crashDamage: 1000,
         score: 10000,
+        exp: 10000,
     },
     YELLOW_BOSS: {
         name: 'yellow_mon_boss',
@@ -49,6 +54,7 @@ const MonsterProps = {
         speed: 4,
         crashDamage: 2000,
         score: 20000,
+        exp: 20000,
     }
 };
 class MonsterRender {
@@ -113,6 +119,7 @@ class Monster {
         this.speed = monsterProps.speed;
         this.crashDamage = monsterProps.crashDamage;
         this.score = monsterProps.score;
+        this.exp = monsterProps.exp;
         this.render = new MonsterRender(positionX, monsterProps.name);
         this.render.init(this.hpRender);
     }
@@ -133,6 +140,7 @@ class Monster {
         this.render.dead();
         deadCallback();
         this.setScore();
+        this.setExp();
     }
     moveMonster(offsetX) {
         this.render.render(this.speed, offsetX);
@@ -152,5 +160,8 @@ class Monster {
         if (el) {
             el.innerText = `${stageInfo.totalScore}`;
         }
+    }
+    setExp() {
+        hero.updateExp(this.exp);
     }
 }

@@ -3,9 +3,10 @@ interface IKeyDown {
 	left?: boolean;
 	right?: boolean;
 	attack?: boolean;
+	slide?: boolean;
 }
 
-type KeyWhichType = 'left' | 'right' | 'attack';
+type KeyWhichType = 'left' | 'right' | 'attack' | 'slide';
 interface IKeyValue {
 	[key: number]: KeyWhichType;
 }
@@ -19,7 +20,8 @@ const key: IKey = {
 	keyValue: {
 		37: 'left',
 		39: 'right',
-		88: 'attack'
+		88: 'attack',
+		67: 'slide',
 	}
 }
 
@@ -34,6 +36,7 @@ const gameBackground = {
 const stageInfo = {
 	stage: new Stage(),
 	totalScore: 0,
+	callPosition: [1000, 5000, 9000],
 }
 
 const gameProp = {

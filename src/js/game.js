@@ -3,7 +3,8 @@ const key = {
     keyValue: {
         37: 'left',
         39: 'right',
-        88: 'attack'
+        88: 'attack',
+        67: 'slide',
     }
 };
 const allMonsterComProp = {
@@ -15,6 +16,7 @@ const gameBackground = {
 const stageInfo = {
     stage: new Stage(),
     totalScore: 0,
+    callPosition: [1000, 5000, 9000],
 };
 const gameProp = {
     screenWidth: window.innerWidth,

@@ -1,7 +1,11 @@
 class HeroRender {
   el: HTMLDivElement;
+  levelEl: HTMLDivElement;
+  levelUpEl: HTMLDivElement;
   constructor(elClassName: string) {
     this.el = document.querySelector(elClassName);
+    this.levelEl = document.querySelector('.level_box strong');
+    this.levelUpEl = document.querySelector('.hero_box .level_up');
   }
   left() {
     this.el.classList.add("run");
@@ -16,6 +20,12 @@ class HeroRender {
   }
   attack() {
     this.el.classList.add("attack");
+  }
+  slide() {
+    this.el.classList.add("slide");
+  }
+  slideEnd() {
+    this.el.classList.remove("slide");
   }
   attackEnd() {
     this.el.classList.remove("attack");
@@ -48,14 +58,26 @@ class HeroRender {
       height: this.el.offsetHeight,
     };
   }
+  levelUp(level: number) {
+    this.levelEl.innerText = `${level}`;
+		this.levelUpEl.classList.add('active');
+
+		setTimeout(() => this.levelUpEl.classList.remove('active'), 1000);
+  }
 }
 class HeroInfoRender {
   el: HTMLDivElement;
+  expEl: HTMLDivElement;
+
   constructor() {
     this.el = document.querySelector('.state_box .hp span');
+    this.expEl = document.querySelector('.hero_state .exp span');
   }
   render(hpProgress: number) {
     this.el.style.width = `${hpProgress}%`;
+  }
+  updateExp(expProgress: number) {
+		this.expEl.style.width = `${expProgress}%`;
   }
 }
 
@@ -78,6 +100,13 @@ class Hero {
   hpValue: number;
   defaultHpValue: number;
   deadEventCallback?: Function;
+  slideSpeed: number;
+  slideTime: number;
+  slideMaxTime: number;
+  level: number;
+  exp: number;
+  maxExp: number;
+  expProgress: number;
 
   constructor(render: HeroRender) {
     this.render = render;
@@ -93,6 +122,13 @@ class Hero {
     this.hpProgress = 0;
     this.hpValue = 100000;
     this.defaultHpValue = this.hpValue;
+    this.slideSpeed = 14;
+    this.slideTime = 0;
+    this.slideMaxTime = 30;
+		this.level = 1;
+		this.exp = 0;
+		this.maxExp = 3000;
+		this.expProgress = 0;
   }
   keyMotion(key: IKey) {
     const { keyDown } = key;
@@ -111,6 +147,11 @@ class Hero {
       }
     }
 
+    if(keyDown.slide) {
+      this.render.slide();
+      this.slide();
+    }
+
     if (!keyDown.left && !keyDown.right) {
       this.render.moveEnd();
     }
@@ -118,6 +159,11 @@ class Hero {
     if (!keyDown.attack) {
       this.render.attackEnd();
       this.attackEnd();
+    }
+
+    if(!keyDown.slide) {
+      this.render.slideEnd();
+      this.slideEnd();
     }
 
     this.render.render(this.moveX);
@@ -145,7 +191,21 @@ class Hero {
   attackEnd() {
     this.bulletComProp.launch = false;
   }
-
+  slide() {
+    if(this.isSlideDown()) {
+      this.render.slideEnd();
+    } else {
+      this.slideTime++;
+      if(this.direction === 'right') {
+        this.moveX = this.moveX + this.slideSpeed;
+      } else {
+        this.moveX = this.moveX - this.slideSpeed;
+      }
+    }
+  }
+  slideEnd() {
+    this.slideTime = 0;
+  }
   position() {
     return this.render.position();
   }
@@ -181,4 +241,27 @@ class Hero {
     this.speed += 1.3;
     this.attackDamage += 15000;
   }
+
+  isSlideDown() {
+    return this.slideMaxTime < this.slideTime;
+  }
+  updateExp(exp: number) {
+		this.exp += exp;
+		this.expProgress = this.exp / this.maxExp * 100;
+    this.heroInfoRender.updateExp(this.expProgress);
+
+		if(this.exp >= this.maxExp){
+			this.levelUp();
+		}
+  }
+
+	levelUp(){
+		this.level += 1;
+		this.exp = 0;
+		this.maxExp = this.maxExp + this.level * 1000;
+    this.render.levelUp(this.level);
+		this.updateExp(this.exp);
+		this.heroUpgrade();
+    this.updateHp(-(this.defaultHpValue - this.hpValue));
+	}
 }

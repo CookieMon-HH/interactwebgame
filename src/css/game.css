@@ -4,10 +4,15 @@
 
 .game_info {position: fixed; left:0; top:0; z-index:20; width: 100%; height: 150px;}
 .game_info .hero_state {width: 300px; height: 100%; padding:10px;}
-.game_info .hero_state .hero_img {float: left; width: 20%;}
+.game_info .hero_state .hero_img {position: relative; float: left; width: 20%;}
+.game_info .hero_state .hero_img .level_box {position: absolute; left:0; top: 100%; font-size:14px; color:#fff;}
+
 .game_info .hero_state .state_box {float: left; width: 80%; height: 100%; padding-top:10px;}
 .game_info .hero_state .state_box .hp {width: 100%; height: 10px; border:1px solid #000;}
 .game_info .hero_state .state_box .hp span {display: block; width: 100%; height: 100%; background-color: red; transition: width .3s linear;}
+
+.game_info .hero_state .state_box .exp {width: 100%; height: 10px; margin-top: 5px; border:1px solid #000;}
+.game_info .hero_state .state_box .exp span {display: block; width: 0%; height: 100%; background-color: #ffd700; transition: width .3s linear;}
 
 .game_info .score_box {position: absolute; top: 10px; right: 10px; color:#fff; font-size: 18px;}
 
@@ -39,7 +44,17 @@
 	from {background-position-x: 0px;}
 	to {background-position-x: -299px;}
 }
+@keyframes hero_slide {
+	from {background-position-x: 0px;}
+	to {background-position-x: -1498px;}
+}
 
+@keyframes hero_levelup {
+	0% {opacity: 0;}
+	20% {opacity: 1;}
+	80% {opacity: 1;}
+	100% {opacity: 0;}
+}
 
 .hero_box {position: fixed; left:0; bottom: 0; z-index:100; width: 150px; height: 182px; will-change: transform;}
 .hero_box .hero {height: 100%; background-image: url('/assets/images/ninja_idle.png'); background-size: 1498px 182px; animation: hero_idle 0.7s infinite steps(10);}
@@ -48,6 +63,10 @@
 .hero_box .hero.attack {height: 100%; background-image: url('/assets/images/ninja_attack.png'); background-size: 1498px 182px; animation: hero_attack 0.7s 1 steps(10);}
 .hero_box .hero.crash {background-image: url('/assets/images/ninja_crash.png'); background-size: 299px 182px; animation: hero_crash 0.4s 1 steps(2);}
 .hero_box .hero.dead {background-image: url('/assets/images/ninja_dead.png'); background-size: 150px 182px; animation: none; transform: rotate(100deg);}
+.hero_box .hero.slide {background-image: url('/assets/images/ninja_slide.png'); background-size: 1498px 182px; animation: hero_slide 0.7s 1 steps(10);}
+
+.hero_box .level_up {position: absolute; left: 50%; bottom: 100%; width: 200px; height: 42px; background-image: url('/assets/images/levelup.png'); background-size: cover; transform: translateX(-50%); opacity: 0;}
+.hero_box .level_up.active {animation: hero_levelup 1s linear; animation-fill-mode: both;}
 
 .hero_bullet {position: absolute; left:0; bottom:0; z-index:90; width:120px; height:24px; background-image: url('/assets/images/hero_bullet.png'); background-size:cover; background-repeat: no-repeat; will-change: transform;}
 

@@ -34,15 +34,15 @@ class Stage {
     start(_monsterArrPointer, hero) {
         this.monsterArrPointer = _monsterArrPointer;
         this.hero = hero;
-        this.stageStart();
+        // this.stageStart();
     }
-    stageStart() {
-        setTimeout(() => {
-            this.isStart = true;
-            this.stageGuide();
-            this.callMonster();
-        }, 2000);
-    }
+    // stageStart() {
+    //     setTimeout(() => {
+    //         this.isStart = true;
+    //         this.stageGuide();
+    //         this.callMonster();
+    //     }, 2000);
+    // }
     stageGuide() {
         this.stageRender.render(`START LEVEL${this.level + 1}`);
     }
@@ -62,17 +62,26 @@ class Stage {
         }
     }
     clearCheck() {
-        if (this.monsterArrPointer.length === 0 && this.isStart) {
-            this.isStart = false;
-            this.level++;
-            if (this.level < StageMonsterInfoList.length) {
-                this.stageRender.render('CLEAR');
-                this.hero.heroUpgrade();
-                this.stageStart();
+        stageInfo.callPosition.forEach(arr => {
+            if (this.hero.moveX >= arr && allMonsterComProp.arr.length === 0) {
+                this.stageRender.render('곧 몬스터가 몰려옵니다!');
+                stageInfo.callPosition.shift();
+                setTimeout(() => {
+                    this.callMonster();
+                    this.level++;
+                }, 1000);
             }
-            else {
-                this.stageRender.render('ALL CLEAR');
-            }
-        }
+        });
+        // if (this.monsterArrPointer.length === 0 && this.isStart) {
+        //     this.isStart = false;
+        //     this.level++;
+        //     if (this.level < StageMonsterInfoList.length) {
+        //         this.stageRender.render('CLEAR');
+        //         this.hero.heroUpgrade();
+        //         this.stageStart();
+        //     } else {
+        //         this.stageRender.render('ALL CLEAR');
+        //     }
+        // }
     }
 }
