@@ -13,7 +13,8 @@ const key = {
         39: 'right',
         40: 'down',
         88: 'attack',
-        67: 'dash'
+        67: 'dash',
+        13: 'enter'
     }
 };
 const rotateanglelist = {
@@ -31,6 +32,9 @@ const allMonsterComProp = {
 };
 const bulletComProp = {
     launch: false,
+    arr: []
+};
+const allNpcComProp = {
     arr: []
 };
 const gameProp = {
@@ -89,8 +93,14 @@ const setGameBackground = () => {
 const widowEvent = () => {
     window.addEventListener('keydown', e => {
         // console.log('키다운' + e.which);
-        key.keyDown[key.keyValue[e.which]] = true;
         // console.log(key.keyDown);
+        if (!gameProp.gameOver)
+            key.keyDown[key.keyValue[e.which]] = true;
+        if (key.keyDown['enter']) {
+            allNpcComProp.arr.forEach((arr, i) => {
+                arr.talk();
+            });
+        }
     });
     window.addEventListener('keyup', e => {
         key.keyDown[key.keyValue[e.which]] = false;
@@ -116,6 +126,8 @@ const init = () => {
     // [참고] 생성자 함수 호출시에는 instance가 곧 this가 된다. 
     gameevent = new gameEvent;
     stageInfo.stage.push(new Stage());
+    allNpcComProp.arr.push(new Npc(levelQuestOne, 500, -2000));
+    allNpcComProp.arr.push(new Npc(levelQuestTwo, 1500, -1000));
     loadImg();
     widowEvent();
     renderGame();

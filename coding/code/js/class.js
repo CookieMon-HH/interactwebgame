@@ -151,9 +151,10 @@ class Tank {
     hitDamage() {
         this.realDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
     }
-    tankUpgrade() {
+    tankUpgrade(upDamage) {
+        let damage = upDamage !== null && upDamage !== void 0 ? upDamage : 500;
+        this.attackDamage += damage;
         this.speed += 1.3;
-        this.attackDamage += 500;
     }
     updateExp(exp) {
         this.exp += exp;
@@ -312,8 +313,73 @@ class Monster {
         setTimeout(() => this.textDamageNode.remove(), 500);
     }
 }
+class Npc {
+    constructor(property, positionX, positionY) {
+        this.property = property;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.parentNode = document.querySelector('.game');
+        this.el = document.createElement('div');
+        this.el.className = 'npc_box';
+        this.npcCrash = false;
+        this.talkOn = false;
+        this.modal = document.querySelector('.quest_modal');
+        this.init();
+    }
+    init() {
+        let npcTalk = '';
+        npcTalk += '<div class="talk_box">';
+        npcTalk += this.property.idleMessage;
+        npcTalk += '</div>';
+        npcTalk += '<div class="npc"></div>';
+        this.el.innerHTML = npcTalk;
+        this.el.style.transform = `translate3d(${this.positionX}px,${this.positionY}px,0)`;
+        this.parentNode.appendChild(this.el);
+    }
+    position() {
+        return {
+            left: this.el.getBoundingClientRect().left,
+            right: this.el.getBoundingClientRect().right,
+            top: gameProp.screenHeight - this.el.getBoundingClientRect().top,
+            bottom: gameProp.screenHeight - this.el.getBoundingClientRect().top - this.el.getBoundingClientRect().height
+        };
+    }
+    talkEvent() {
+        let modalMessage = '';
+        switch (this.property.questState.state) {
+            case "start":
+                this.property.questState.questStart = true;
+                modalMessage = this.property.message.start;
+                break;
+            case "ing":
+                modalMessage = this.property.message.ing;
+                break;
+            case "suc":
+                this.property.questState.questEnd = true;
+                modalMessage = this.property.message.suc;
+                this.property.questPresent();
+                break;
+            case "end":
+                modalMessage = this.property.message.end;
+                break;
+        }
+        fillQuestModal(modalMessage);
+    }
+    talk() {
+        if (!this.talkOn && this.npcCrash) {
+            this.talkOn = true;
+            this.talkEvent();
+            this.modal.classList.add('active');
+        }
+        else if (this.talkOn) {
+            this.talkOn = false;
+            this.modal.classList.remove('active');
+        }
+    }
+}
 class gameEvent {
     constructor() {
+        this.isAlarm = [false, false];
     }
     init() {
     }
@@ -331,6 +397,9 @@ class gameEvent {
     eventGenerater() {
         this.bulletcrash();
         this.monstercrash();
+        this.NpcCrash();
+        this.QuestStateChecker();
+        this.QuestClearAlarm();
     }
     //bullet -> monster crash
     bulletcrash() {
@@ -354,6 +423,54 @@ class gameEvent {
             if (this.rectOvlerapChecker(allMonsterComProp.arr[j], tank, { right_tol: 30, left_tol: 30, top_tol: 30, bottom_tol: 30 })) {
                 tank.updateHp('minus', allMonsterComProp.arr[j].crashDamage);
             }
+        }
+    }
+    NpcCrash() {
+        for (let j = 0; j < allNpcComProp.arr.length; j++) {
+            if (this.rectOvlerapChecker(allNpcComProp.arr[j], tank, { right_tol: 30, left_tol: 30, top_tol: 30, bottom_tol: 30 })) {
+                allNpcComProp.arr[j].npcCrash = true;
+            }
+            else {
+                allNpcComProp.arr[j].npcCrash = false;
+            }
+        }
+    }
+    QuestStateChecker() {
+        //clear check
+        for (let j = 0; j < allNpcComProp.arr.length; j++) {
+            let quest = allNpcComProp.arr[j].property;
+            if (quest.questClearConditionChecker()) {
+                quest.questState.questClearCondition = true;
+            }
+            else {
+                quest.questState.questClearCondition = false;
+            }
+        }
+        //Quest State Check 
+        for (let j = 0; j < allNpcComProp.arr.length; j++) {
+            let quest = allNpcComProp.arr[j].property;
+            if (!quest.questState.questStart) {
+                quest.questState.state = "start";
+            }
+            else if (quest.questState.questStart && !quest.questState.questEnd && !quest.questState.questClearCondition) {
+                quest.questState.state = "ing";
+            }
+            else if (quest.questState.questStart && !quest.questState.questEnd && quest.questState.questClearCondition) {
+                quest.questState.state = "suc";
+            }
+            else if (quest.questState.questStart && quest.questState.questEnd) {
+                quest.questState.state = "end";
+            }
+        }
+    }
+    QuestClearAlarm() {
+        if (allNpcComProp.arr[0].property.questState.state == "suc" && this.isAlarm[0] == false) {
+            console.log('퀘스트 1 클리어 : 보상을 받으러 가시오');
+            this.isAlarm[0] = true;
+        }
+        if (allNpcComProp.arr[1].property.questState.state == "suc" && this.isAlarm[1] == false) {
+            console.log('퀘스트 2 클리어 : 보상을 받으러 가시오');
+            this.isAlarm[1] = true;
         }
     }
     setScore(score) {
@@ -392,7 +509,7 @@ class Stage {
         var genMonster = setInterval(() => {
             this.count = this.count + 1;
             if (this.count === monsterNum - 1) {
-                allMonsterComProp.arr.push(new Monster(monsterType.bossMon, { locationX: 1500, locationY: -1500 }));
+                allMonsterComProp.arr.push(new Monster(monsterType.bossMon, { locationX: gameProp.fieldMaxRangeX / 2, locationY: -gameProp.fieldMaxRangeY / 2 }));
                 clearInterval(genMonster);
                 this.isGenEnd = true;
                 this.count = 0;

@@ -19,6 +19,15 @@
 .game_over.active {display: block;}
 .game_over p {display: flex; height: 100%; align-items: center; justify-content: center; color: #fff; font-size: 150px;}
 
+.quest_modal {display: none; position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 210; background-color: rgba(0,0,0, .7);}
+.quest_modal.active {display: block;}
+.quest_modal .inner_box {position: absolute; left: 50%; top: 50%; z-index: 10; width: 700px; transform: translate(-50%, -50%); padding:40px 10px; box-sizing: border-box; background-color: #fff; border:10px solid #8793eb; border-radius: 10px;}
+.quest_modal .inner_box .close {position: absolute; right: 10px; bottom: 5px; color: #bf0000;}
+
+.quest_talk .npc_img {float: left; width: 10%;}
+.quest_talk p {float: left; width: 90%; padding-left: 20px; color: #222; font-size: 20px;}
+.quest_talk p span {color: red;}
+
 @keyframes stageStart {
 	0% {opacity: 1;}
 	80% {opacity: 1;}
@@ -114,3 +123,11 @@
 	100% {opacity: 0; bottom:90px;}
 }
 .text_damage {position: absolute; left:0; bottom: 0; z-index: 200; font-family: 'roboto'; font-size: 110px; background: linear-gradient(to bottom, rgba(196,41,30,1) 0%,rgba(230,89,191,1) 100%); -webkit-text-stroke: 5px rgba(255,255,255,.7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textDamage .5s ease-out; animation-fill-mode: both;}
+
+.npc_box {position: absolute; left: 400px; bottom: 0; z-index: 90; width: 150px; height: 182px;}
+.npc_box .npc {height: 100%; background-image: url('../../../lib/images/robot_idle.png'); background-size: 1498px 182px; animation: npc_idle .7s infinite steps(10);}
+
+.npc_box .talk_box {position: absolute; left: 60px; bottom: 105%; width: 150px; color: #222; background-color: #f1f1f1; border:2px solid #555; border-radius:20px;}
+.npc_box .talk_box p {padding:10px;}
+.npc_box .talk_box span {display: block; color: #bf0000; text-align: right; font-size: 14px;}
+
