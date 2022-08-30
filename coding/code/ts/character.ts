@@ -39,7 +39,7 @@ class Character {
     this._moveX = 0;
     this._speed = 12;
     this._levelInfo = {
-      level : 1,
+      level : 6,
       currentExp: 0,
       maxExp : 3000,
       expProgress: 0
@@ -60,6 +60,10 @@ class Character {
       currentHp: 1000000,
       defaultHp: 1000000
     };
+  }
+
+  get currentLevel() {
+    return this._levelInfo.level;
   }
 
   get direction() {

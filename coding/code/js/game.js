@@ -1,6 +1,7 @@
 const key = {
     keyDown: {},
     keyValue: {
+        13: 'enter',
         37: 'left',
         39: 'right',
         67: 'slide',
@@ -9,6 +10,8 @@ const key = {
 };
 let character;
 let monster;
+let npcOne;
+let npcTwo;
 const pinkMonster = (heroMoveX, isBoss = false) => {
     if (isBoss) {
         return {
@@ -136,6 +139,8 @@ const gameProp = {
 const renderGame = () => {
     character.keyMotion();
     setGameBackground();
+    npcOne.crash();
+    npcTwo.crash();
     bulletComProp.arr.forEach((bullet, i) => {
         bullet.moveBullet();
     });
@@ -160,6 +165,10 @@ const windowEvent = () => {
     window.addEventListener('keydown', e => {
         if (!gameProp.gameOver)
             key.keyDown[key.keyValue[e.which]] = true;
+        if (key.keyDown['enter']) {
+            npcOne.talk();
+            npcTwo.talk();
+        }
     });
     window.addEventListener('keyup', e => {
         key.keyDown[key.keyValue[e.which]] = false;
@@ -179,6 +188,8 @@ const loadImg = () => {
 const init = () => {
     character = new Character('.character');
     stageInfo.stage.push(new Stage());
+    npcOne = new Npc("NPC_YELLOW" /* NpcType.NPC_YELLOW */, 600);
+    npcTwo = new Npc("NPC_TWO" /* NpcType.NPC_TWO */, 1200);
     loadImg();
     windowEvent();
     renderGame();

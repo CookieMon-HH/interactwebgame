@@ -1,6 +1,7 @@
 const key = {
   keyDown: {},
   keyValue: {
+    13: 'enter',
     37: 'left',
     39: 'right',
     67: 'slide',
@@ -9,9 +10,11 @@ const key = {
 }
 let character;
 let monster;
+let npcOne;
+let npcTwo;
 
-const pinkMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo => {
-  if(isBoss) {
+const pinkMonster = (heroMoveX: number, isBoss: boolean = false): IMonsterInfo => {
+  if (isBoss) {
     return {
       hp: {
         max: 3000,
@@ -41,8 +44,8 @@ const pinkMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo
   }
 }
 
-const yellowMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo => {
-  if(isBoss) {
+const yellowMonster = (heroMoveX: number, isBoss: boolean = false): IMonsterInfo => {
+  if (isBoss) {
     return {
       hp: {
         max: 150000,
@@ -72,8 +75,8 @@ const yellowMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterIn
   }
 }
 
-const greenMonster = (heroMoveX : number, isBoss: boolean = false) : IMonsterInfo => {
-  if(isBoss) {
+const greenMonster = (heroMoveX: number, isBoss: boolean = false): IMonsterInfo => {
+  if (isBoss) {
     return {
       hp: {
         max: 100000,
@@ -116,24 +119,24 @@ const gameBackground: any = {
   gameBox: document.querySelector('.game')
 }
 
-const stageInfo : {totalScore : number, stage : Stage[], monster: {defaultMonster: (moveX : number) => IMonsterInfo, bossMonster: (moveX : number) => IMonsterInfo}[], callPosition : number[]} = {
-  totalScore : 0,
+const stageInfo: { totalScore: number, stage: Stage[], monster: { defaultMonster: (moveX: number) => IMonsterInfo, bossMonster: (moveX: number) => IMonsterInfo }[], callPosition: number[] } = {
+  totalScore: 0,
   stage: [],
   monster: [
     {
-      defaultMonster: (moveX : number) => greenMonster(moveX || 0),
-      bossMonster: (moveX : number) => greenMonster(moveX || 0, true)
+      defaultMonster: (moveX: number) => greenMonster(moveX || 0),
+      bossMonster: (moveX: number) => greenMonster(moveX || 0, true)
     },
     {
-      defaultMonster: (moveX : number) => yellowMonster(moveX || 0),
-      bossMonster: (moveX : number) => yellowMonster(moveX || 0, true)
+      defaultMonster: (moveX: number) => yellowMonster(moveX || 0),
+      bossMonster: (moveX: number) => yellowMonster(moveX || 0, true)
     },
     {
-      defaultMonster: (moveX : number) => pinkMonster(moveX || 0),
-      bossMonster: (moveX : number) => pinkMonster(moveX || 0, true)
+      defaultMonster: (moveX: number) => pinkMonster(moveX || 0),
+      bossMonster: (moveX: number) => pinkMonster(moveX || 0, true)
     }
   ],
-  callPosition : [1000, 2000, 3000]
+  callPosition: [1000, 2000, 3000]
 }
 
 const gameProp = {
@@ -145,10 +148,12 @@ const gameProp = {
 const renderGame = () => {
   character.keyMotion();
   setGameBackground();
+  npcOne.crash();
+  npcTwo.crash();
   bulletComProp.arr.forEach((bullet, i) => {
     bullet.moveBullet();
   });
-  
+
   allMonsterComProp.arr.forEach((monster, i) => {
     monster.move();
   })
@@ -172,8 +177,12 @@ const setGameBackground = () => {
 
 const windowEvent = () => {
   window.addEventListener('keydown', e => {
-    if(!gameProp.gameOver)
+    if (!gameProp.gameOver)
       key.keyDown[key.keyValue[e.which]] = true;
+    if(key.keyDown['enter']){
+      npcOne.talk();
+      npcTwo.talk();
+    }
   });
 
   window.addEventListener('keyup', e => {
@@ -197,6 +206,8 @@ const loadImg = () => {
 const init = () => {
   character = new Character('.character');
   stageInfo.stage.push(new Stage());
+  npcOne = new Npc(NpcType.NPC_YELLOW, 600);
+  npcTwo = new Npc(NpcType.NPC_TWO, 1200);
   loadImg();
   windowEvent();
   renderGame();

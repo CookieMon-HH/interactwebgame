@@ -2,51 +2,60 @@
 <html lang="ko">
 
 <head>
-	<title>GGANG GAME</title>
-	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="../../lib/css/common.css">
-	<link rel="stylesheet" type="text/css" href="./css/game.css">
+    <title>GGANG GAME</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./css/game.css">
 </head>
 <body>
-	<div class="game_app">
-		<div class="sky"></div>
-		<div class="game">
-			<div class="character_box">
-				<span class="level_up"></span>
-				<div class="character"></div>
-			</div>
-		</div>
-		<div class="game_info">
-			<div class="character_state">
-				<figure class="character_img">
-					<img src="../../lib/images/ninja_profile.png" alt="">
-					<div class="level_box">
-						<span>LV.</span>
-						<strong>1</strong>
-					</div>
-				</figure>
-				<div class="state_box">
-					<div class="hp">
-						<span></span>
-					</div>
-					<div class="exp">
-						<span></span>
-					</div>
-				</div>
-			</div>
-			<div class="score_box">
-				0
-			</div>
-		</div>
- 		<div class="game_over">
-			<p>GAME OVER</p>
-		</div>
-	</div>
-	<script type="text/javascript" src="./js/stage.js" charset="utf-8"></script>
-	<script type="text/javascript" src="./js/bullet.js" charset="utf-8"></script>
-	<script type="text/javascript" src="./js/character.js" charset="utf-8"></script>
-	<script type="text/javascript" src="./js/game.js" charset="utf-8"></script>
-	<script type="text/javascript" src="./js/monster.js" charset="utf-8"></script>
+<div class="game_app">
+    <div class="sky"></div>
+    <div class="game">
+        <div class="character_box">
+            <span class="level_up"></span>
+            <div class="character"></div>
+        </div>
+    </div>
+    <div class="game_info">
+        <div class="character_state">
+            <figure class="character_img">
+                <img src="../../lib/images/ninja_profile.png" alt="">
+                <div class="level_box">
+                    <span>LV.</span>
+                    <strong>1</strong>
+                </div>
+            </figure>
+            <div class="state_box">
+                <div class="hp">
+                    <span></span>
+                </div>
+                <div class="exp">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <div class="score_box">
+            0
+        </div>
+    </div>
+    <div class="game_over">
+        <p>GAME OVER</p>
+    </div>
+    <div class="quest_modal">
+        <div class="inner_box">
+            <div class="quest_talk">
+
+            </div>
+            <span class="close">닫기 Enter</span>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="./js/stage.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/bullet.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/character.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/game.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/monster.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/npc.js" charset="utf-8"></script>
 </body>
 
 </html>
