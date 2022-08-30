@@ -237,9 +237,9 @@ class Hero {
     return this.bulletComProp.arr;
   }
 
-  heroUpgrade() {
-    this.speed += 1.3;
-    this.attackDamage += 15000;
+  heroUpgrade(upDamage?: number) {
+    let damage = upDamage ?? 5000;
+    this.attackDamage += damage;
   }
 
   isSlideDown() {

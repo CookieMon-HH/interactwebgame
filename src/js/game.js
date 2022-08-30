@@ -1,17 +1,18 @@
 const key = {
     keyDown: {},
     keyValue: {
-        37: 'left',
-        39: 'right',
-        88: 'attack',
-        67: 'slide',
-    }
+        37: "left",
+        39: "right",
+        88: "attack",
+        67: "slide",
+        13: "enter",
+    },
 };
 const allMonsterComProp = {
-    arr: []
+    arr: [],
 };
 const gameBackground = {
-    gameBox: document.querySelector('.game')
+    gameBox: document.querySelector(".game"),
 };
 const stageInfo = {
     stage: new Stage(),
@@ -26,6 +27,7 @@ const gameProp = {
 const renderGame = () => {
     hero.keyMotion(key);
     setGameBackground();
+    npcOne.crash();
     hero.bullets.forEach((bullet) => {
         bullet.moveBullet(() => {
             const crashedBullet = hero.bullets.findIndex((target) => target === bullet);
@@ -44,7 +46,7 @@ const endGame = () => {
     key.keyDown.left = false;
     key.keyDown.right = false;
     key.keyDown.attack = false;
-    document.querySelector('.game_over').classList.add('active');
+    document.querySelector(".game_over").classList.add("active");
 };
 const setGameBackground = () => {
     let parallaxValue = Math.min(0, (hero.moveX - gameProp.screenWidth / 3) * -1);
@@ -53,32 +55,40 @@ const setGameBackground = () => {
     gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
 };
 const windowEvent = () => {
-    window.addEventListener('keydown', e => {
+    window.addEventListener("keydown", (e) => {
         if (gameProp.gameOver)
             return;
         key.keyDown[key.keyValue[e.which]] = true;
+        if (key.keyDown.enter) {
+            npcOne.talk();
+        }
     });
-    window.addEventListener('keyup', e => {
+    window.addEventListener("keyup", (e) => {
         if (gameProp.gameOver)
             return;
         key.keyDown[key.keyValue[e.which]] = false;
     });
-    window.addEventListener('resize', e => {
+    window.addEventListener("resize", (e) => {
         gameProp.screenWidth = window.innerWidth;
         gameProp.screenHeight = window.innerHeight;
     });
 };
 const loadImg = () => {
-    const preLoadImgSrc = ['/assets/images/ninja_attack.png', '/assets/images/ninja_run.png'];
-    preLoadImgSrc.forEach(arr => {
+    const preLoadImgSrc = [
+        "/assets/images/ninja_attack.png",
+        "/assets/images/ninja_run.png",
+    ];
+    preLoadImgSrc.forEach((arr) => {
         const img = new Image();
         img.src = arr;
     });
 };
 let hero;
+let npcOne;
 const init = () => {
-    hero = new Hero(new HeroRender('.hero'));
+    hero = new Hero(new HeroRender(".hero"));
     hero.addDeadEvent(endGame);
+    npcOne = new Npc(new NpcRender(), hero);
     stageInfo.stage.start(allMonsterComProp.arr, hero);
     loadImg();
     windowEvent();

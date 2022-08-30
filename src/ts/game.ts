@@ -1,124 +1,131 @@
-
 interface IKeyDown {
-	left?: boolean;
-	right?: boolean;
-	attack?: boolean;
-	slide?: boolean;
+  left?: boolean;
+  right?: boolean;
+  attack?: boolean;
+  slide?: boolean;
+  enter?: boolean;
 }
 
-type KeyWhichType = 'left' | 'right' | 'attack' | 'slide';
+type KeyWhichType = "left" | "right" | "attack" | "slide" | "enter";
 interface IKeyValue {
-	[key: number]: KeyWhichType;
+  [key: number]: KeyWhichType;
 }
 interface IKey {
-	keyDown: IKeyDown;
-	keyValue: IKeyValue;
+  keyDown: IKeyDown;
+  keyValue: IKeyValue;
 }
 
 const key: IKey = {
-	keyDown: {},
-	keyValue: {
-		37: 'left',
-		39: 'right',
-		88: 'attack',
-		67: 'slide',
-	}
-}
+  keyDown: {},
+  keyValue: {
+    37: "left",
+    39: "right",
+    88: "attack",
+    67: "slide",
+    13: "enter",
+  },
+};
 
 const allMonsterComProp: { arr: Monster[] } = {
-	arr: []
-}
+  arr: [],
+};
 
 const gameBackground = {
-	gameBox: document.querySelector('.game')
-}
+  gameBox: document.querySelector(".game"),
+};
 
 const stageInfo = {
-	stage: new Stage(),
-	totalScore: 0,
-	callPosition: [1000, 5000, 9000],
-}
+  stage: new Stage(),
+  totalScore: 0,
+  callPosition: [1000, 5000, 9000],
+};
 
 const gameProp = {
-	screenWidth: window.innerWidth,
-	screenHeight: window.innerHeight,
-	gameOver: false,
-}
+  screenWidth: window.innerWidth,
+  screenHeight: window.innerHeight,
+  gameOver: false,
+};
 
 const renderGame = () => {
-	hero.keyMotion(key);
-	setGameBackground();
+  hero.keyMotion(key);
+  setGameBackground();
 
-	hero.bullets.forEach((bullet) => {
-		bullet.moveBullet(() => {
-			const crashedBullet = hero.bullets.findIndex((target) => target === bullet);
-			hero.bullets.splice(crashedBullet, 1);
-		}, allMonsterComProp.arr);
-	});
-	allMonsterComProp.arr.forEach((monster) => {
-		monster.moveMonster(hero.moveX - hero.position().left);
-		monster.crash(hero);
-	});
-	stageInfo.stage.clearCheck();
-	window.requestAnimationFrame(renderGame);
-}
+  npcOne.crash();
+
+  hero.bullets.forEach((bullet) => {
+    bullet.moveBullet(() => {
+      const crashedBullet = hero.bullets.findIndex(
+        (target) => target === bullet
+      );
+      hero.bullets.splice(crashedBullet, 1);
+    }, allMonsterComProp.arr);
+  });
+  allMonsterComProp.arr.forEach((monster) => {
+    monster.moveMonster(hero.moveX - hero.position().left);
+    monster.crash(hero);
+  });
+  stageInfo.stage.clearCheck();
+  window.requestAnimationFrame(renderGame);
+};
 
 const endGame = () => {
-	gameProp.gameOver = true;
-	key.keyDown.left = false;
-	key.keyDown.right = false;
-	key.keyDown.attack = false;
-	document.querySelector('.game_over').classList.add('active');
-}
+  gameProp.gameOver = true;
+  key.keyDown.left = false;
+  key.keyDown.right = false;
+  key.keyDown.attack = false;
+  document.querySelector(".game_over").classList.add("active");
+};
 
 const setGameBackground = () => {
-	let parallaxValue = Math.min(0, (hero.moveX - gameProp.screenWidth / 3) * -1);
-	if (!(gameBackground.gameBox instanceof HTMLElement)) return;
-	gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
-}
+  let parallaxValue = Math.min(0, (hero.moveX - gameProp.screenWidth / 3) * -1);
+  if (!(gameBackground.gameBox instanceof HTMLElement)) return;
+  gameBackground.gameBox.style.transform = `translateX(${parallaxValue}px)`;
+};
 
 const windowEvent = () => {
-	window.addEventListener('keydown', e => {
-		if(gameProp.gameOver) return;
-		key.keyDown[key.keyValue[e.which]] = true;
-	});
+  window.addEventListener("keydown", (e) => {
+    if (gameProp.gameOver) return;
+    key.keyDown[key.keyValue[e.which]] = true;
+    if (key.keyDown.enter) {
+      npcOne.talk();
+    }
+  });
 
-	window.addEventListener('keyup', e => {
-		if(gameProp.gameOver) return;
-		key.keyDown[key.keyValue[e.which]] = false;
-	});
+  window.addEventListener("keyup", (e) => {
+    if (gameProp.gameOver) return;
+    key.keyDown[key.keyValue[e.which]] = false;
+  });
 
-	window.addEventListener('resize', e => {
-		gameProp.screenWidth = window.innerWidth;
-		gameProp.screenHeight = window.innerHeight;
-	});
-}
+  window.addEventListener("resize", (e) => {
+    gameProp.screenWidth = window.innerWidth;
+    gameProp.screenHeight = window.innerHeight;
+  });
+};
 
 const loadImg = () => {
-	const preLoadImgSrc = ['/assets/images/ninja_attack.png', '/assets/images/ninja_run.png'];
-	preLoadImgSrc.forEach(arr => {
-		const img = new Image();
-		img.src = arr;
-	});
-}
+  const preLoadImgSrc = [
+    "/assets/images/ninja_attack.png",
+    "/assets/images/ninja_run.png",
+  ];
+  preLoadImgSrc.forEach((arr) => {
+    const img = new Image();
+    img.src = arr;
+  });
+};
 
 let hero: Hero;
+let npcOne: Npc;
 
 const init = () => {
-	hero = new Hero(new HeroRender('.hero'));
-	hero.addDeadEvent(endGame);
-	stageInfo.stage.start(allMonsterComProp.arr, hero);
-	loadImg();
-	windowEvent();
-	renderGame();
-}
+  hero = new Hero(new HeroRender(".hero"));
+  hero.addDeadEvent(endGame);
+  npcOne = new Npc(new NpcRender(), hero);
+  stageInfo.stage.start(allMonsterComProp.arr, hero);
+  loadImg();
+  windowEvent();
+  renderGame();
+};
 
 window.onload = () => {
-	init();
-}
-
-
-
-
-
-
+  init();
+};

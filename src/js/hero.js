@@ -192,9 +192,9 @@ class Hero {
     get bullets() {
         return this.bulletComProp.arr;
     }
-    heroUpgrade() {
-        this.speed += 1.3;
-        this.attackDamage += 15000;
+    heroUpgrade(upDamage) {
+        let damage = upDamage !== null && upDamage !== void 0 ? upDamage : 5000;
+        this.attackDamage += damage;
     }
     isSlideDown() {
         return this.slideMaxTime < this.slideTime;
